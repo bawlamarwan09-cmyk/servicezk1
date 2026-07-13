@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { homeFaqs } from "./seo-content";
 
 const cleaningServices = [
   "Daily, weekly & periodic cleaning",
@@ -56,6 +57,39 @@ const processSteps = [
   ["03", "Enjoy a better space", "Your service is delivered with care and attention."],
 ];
 
+const serviceHighlights = [
+  {
+    slug: "commercial-office-cleaning-dubai",
+    number: "01",
+    title: "Commercial & office cleaning",
+    copy: "Scheduled workplace cleaning, floors, carpets, windows and washroom hygiene in Dubai.",
+  },
+  {
+    slug: "deep-post-construction-cleaning-dubai",
+    number: "02",
+    title: "Deep & post-construction cleaning",
+    copy: "Detailed cleaning for properties preparing for use, reopening or handover.",
+  },
+  {
+    slug: "building-maintenance-dubai",
+    number: "03",
+    title: "Building maintenance",
+    copy: "Civil works, painting, carpentry, flooring, preventive care and emergency repairs.",
+  },
+  {
+    slug: "mep-hvac-maintenance-dubai",
+    number: "04",
+    title: "MEP & HVAC maintenance",
+    copy: "Mechanical, electrical, plumbing and air-conditioning support for managed properties.",
+  },
+  {
+    slug: "facility-management-services-uae",
+    number: "05",
+    title: "Facility management across the UAE",
+    copy: "Coordinated cleaning and technical maintenance under one service relationship.",
+  },
+];
+
 const contactItems = [
   {
     label: "Call us",
@@ -69,7 +103,7 @@ const contactItems = [
   },
   {
     label: "Visit",
-    value: "Levana Residence, Al Barsha 1, Ground Floor",
+    value: "Ground Floor, Levana Residence, Al Barsha 1, Dubai, UAE",
     href: "https://maps.google.com/?q=Levana+Residence+Al+Barsha+1+Dubai",
   },
 ];
@@ -176,6 +210,8 @@ export function EvoluraLanding() {
 
       <main id="main-content">
         <section id="top" className="hero-section" aria-labelledby="hero-heading">
+          {/* Pre-sized WebP sources keep the brochure hero responsive without a runtime image transformer. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="hero-section__image"
             src="/evolura-hero.webp"
@@ -194,21 +230,22 @@ export function EvoluraLanding() {
           <div className="site-shell relative z-10 flex min-h-[760px] items-center pb-24 pt-28 lg:min-h-[820px]">
             <div className="max-w-[900px] text-white">
               <p className="hero-eyebrow hero-enter hero-enter--1">
-                <span /> Cleaning & facility care · Dubai
+                <span /> Commercial cleaning & building maintenance · Dubai & UAE
               </p>
               <h1
                 id="hero-heading"
                 className="hero-enter hero-enter--2 mt-6 text-[clamp(3.4rem,7vw,7.1rem)] font-bold uppercase leading-[0.89] tracking-[-0.07em]"
               >
-                Clean spaces.
+                Commercial cleaning.
                 <br />
-                Well-maintained
+                Building maintenance.
                 <br />
-                places. <em>Better living.</em>
+                <em>Dubai & UAE.</em>
               </h1>
               <p className="hero-enter hero-enter--3 mt-8 max-w-[640px] text-base leading-7 text-white/76 md:text-lg md:leading-8">
-                Professional cleaning and facility management solutions that create safe,
-                healthy and well-maintained environments for every building we serve.
+                Clean spaces. Well-maintained places. Better living. Evolura provides
+                professional cleaning, MEP, HVAC and facility maintenance solutions for
+                offices, commercial buildings and managed properties.
               </p>
               <div className="hero-enter hero-enter--4 mt-9 flex flex-col gap-3 sm:flex-row">
                 <a className="primary-button" href="#request-service">
@@ -243,9 +280,9 @@ export function EvoluraLanding() {
               <div>
                 <p className="section-kicker">Our services</p>
                 <h2 className="section-title mt-5 max-w-[700px]">
-                  One trusted team.
+                  Cleaning and technical maintenance.
                   <br />
-                  Every detail handled.
+                  One trusted UAE team.
                 </h2>
               </div>
               <p className="max-w-[600px] text-base leading-8 text-[#536b79] lg:justify-self-end lg:pb-2 md:text-lg">
@@ -265,10 +302,10 @@ export function EvoluraLanding() {
                   <span className="service-card__monogram" aria-hidden="true">
                     CL
                   </span>
-                  <h3>Cleaning services</h3>
+                  <h3>Commercial cleaning services</h3>
                   <p>
-                    Meticulous care for workplaces, common areas and facilities of every
-                    scale.
+                    Professional office and commercial cleaning in Dubai, with flexible
+                    support for managed facilities across the UAE.
                   </p>
                 </div>
                 <ul>
@@ -296,10 +333,10 @@ export function EvoluraLanding() {
                   <span className="service-card__monogram" aria-hidden="true">
                     MT
                   </span>
-                  <h3>Maintenance services</h3>
+                  <h3>Building maintenance services</h3>
                   <p>
-                    Responsive technical support that protects comfort, safety and building
-                    value.
+                    Responsive building, MEP and HVAC maintenance that protects comfort,
+                    safety and property value.
                   </p>
                 </div>
                 <ul>
@@ -317,6 +354,27 @@ export function EvoluraLanding() {
                   Request maintenance <span aria-hidden="true">→</span>
                 </a>
               </article>
+            </div>
+
+            <div className="seo-services-heading">
+              <div>
+                <p className="section-kicker">Explore by service</p>
+                <h3>Detailed cleaning and maintenance services for Dubai properties.</h3>
+              </div>
+              <p>
+                Each page explains the service scope, properties supported and how to
+                request a tailored visit across the United Arab Emirates.
+              </p>
+            </div>
+            <div className="seo-services-grid">
+              {serviceHighlights.map((service) => (
+                <a href={`/services/${service.slug}`} key={service.slug}>
+                  <span>{service.number}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.copy}</p>
+                  <i aria-hidden="true">↗</i>
+                </a>
+              ))}
             </div>
           </div>
         </section>
@@ -387,7 +445,7 @@ export function EvoluraLanding() {
               <p className="mt-16 max-w-[720px] text-base leading-8 text-white/65 md:text-lg md:leading-9">
                 We deliver high-quality cleaning and maintenance services with integrity,
                 reliability and attention to detail. Our goal is to enhance the value,
-                safety and comfort of every facility we manage.
+                safety and comfort of every facility we manage in Dubai and across the UAE.
               </p>
             </div>
 
@@ -414,6 +472,52 @@ export function EvoluraLanding() {
               <a href="#request-service">
                 Start your request <span aria-hidden="true">↘</span>
               </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="coverage-section py-24 md:py-32" aria-labelledby="coverage-heading">
+          <div className="site-shell grid gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-end lg:gap-24">
+            <div>
+              <p className="section-kicker">Dubai based · UAE coverage</p>
+              <h2 id="coverage-heading" className="section-title mt-5">
+                Facility care for properties across the United Arab Emirates.
+              </h2>
+            </div>
+            <div>
+              <p className="coverage-section__lead">
+                Based in Al Barsha 1, Dubai, Evolura accepts cleaning, building maintenance,
+                MEP, HVAC and facility management requests across the UAE. Coverage and
+                timing are confirmed after reviewing the property location and scope.
+              </p>
+              <ul className="coverage-section__types">
+                <li>Offices & workplaces</li>
+                <li>Commercial buildings</li>
+                <li>Managed residential facilities</li>
+                <li>Retail & shared areas</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section className="home-faq py-24 md:py-32" aria-labelledby="home-faq-heading">
+          <div className="site-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-24">
+            <div>
+              <p className="section-kicker">Frequently asked questions</p>
+              <h2 id="home-faq-heading" className="section-title mt-5">
+                Cleaning and maintenance answers for UAE properties.
+              </h2>
+            </div>
+            <div className="faq-list">
+              {homeFaqs.map((faq) => (
+                <details key={faq.question}>
+                  <summary>
+                    {faq.question}
+                    <span aria-hidden="true">+</span>
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
@@ -547,14 +651,27 @@ export function EvoluraLanding() {
               <p className="mt-7 max-w-[670px] text-3xl font-semibold uppercase leading-tight tracking-[-0.04em] text-white md:text-5xl">
                 Cleaner environments. Stronger buildings. <span>Better tomorrow.</span>
               </p>
+              <address className="service-footer-address">
+                Ground Floor, Levana Residence, Al Barsha 1, Dubai, United Arab Emirates
+                <br />
+                <a href="tel:+971503112307">+971 50 311 2307</a>
+                <span aria-hidden="true"> · </span>
+                <a href="mailto:info@evolurats.com">info@evolurats.com</a>
+              </address>
             </div>
             <a className="footer-top" href="#top">
               Back to top <span aria-hidden="true">↑</span>
             </a>
           </div>
-          <div className="flex flex-col gap-4 border-t border-white/12 py-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 border-t border-white/12 py-6 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
             <p>© {new Date().getFullYear()} Evolura Technical Services.</p>
-            <p>Clean spaces · Well-maintained places · Better living</p>
+            <nav className="footer-service-nav" aria-label="Service pages">
+              {serviceHighlights.map((service) => (
+                <a href={`/services/${service.slug}`} key={service.slug}>
+                  {service.title}
+                </a>
+              ))}
+            </nav>
           </div>
         </div>
       </footer>
