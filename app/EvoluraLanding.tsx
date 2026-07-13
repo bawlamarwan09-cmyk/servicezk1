@@ -395,10 +395,10 @@ export function EvoluraLanding() {
           </div>
         </section>
 
-        <section id="services" className="services-section section-anchor bg-[#f4f8fa] py-24 md:py-32">
+        <section id="services" className="services-section section-anchor bg-[#f4f8fa] py-16 md:py-20">
           <div className="services-section__halo" aria-hidden="true" />
           <div className="site-shell">
-            <div className="reveal grid items-end gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="reveal grid items-start gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div>
                 <p className="section-kicker">Our services</p>
                 <h2 className="section-title mt-5 max-w-[700px]">
@@ -407,7 +407,7 @@ export function EvoluraLanding() {
                   One trusted UAE team.
                 </h2>
               </div>
-              <p className="max-w-[600px] text-base leading-8 text-[#536b79] lg:justify-self-end lg:pb-2 md:text-lg">
+              <p className="max-w-[600px] text-base leading-8 text-[#536b79] lg:justify-self-end lg:pt-12 md:text-lg">
                 From the everyday care that keeps your workplace fresh to the technical
                 support that keeps your building performing, Evolura makes facility care
                 feel straightforward.
