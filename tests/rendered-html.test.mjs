@@ -154,6 +154,10 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(page, /Commercial Cleaning & Building Maintenance Dubai \| Evolura/);
   assert.match(layout, /Evolura Technical Services/);
   assert.match(layout, /LocalBusiness/);
+  const packageConfig = JSON.parse(packageJson);
+  assert.equal(packageConfig.engines.node, "22.x");
+  assert.equal(packageConfig.scripts.build, "next build");
+  assert.match(packageConfig.scripts["build:sites"], /vinext build/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("public/evolura-hero.webp", root));
   await access(new URL("public/evolura-hero-960.webp", root));
