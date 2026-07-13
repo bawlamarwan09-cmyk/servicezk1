@@ -16,6 +16,14 @@ export const metadata: Metadata = {
     title: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
     description:
       "Commercial cleaning, deep cleaning, MEP, HVAC and building maintenance services in Dubai and across the UAE.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Evolura commercial cleaning and building maintenance services in Dubai and the UAE",
+      },
+    ],
   },
 };
 

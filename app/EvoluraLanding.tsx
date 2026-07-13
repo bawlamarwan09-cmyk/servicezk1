@@ -63,30 +63,45 @@ const serviceHighlights = [
     number: "01",
     title: "Commercial & office cleaning",
     copy: "Scheduled workplace cleaning, floors, carpets, windows and washroom hygiene in Dubai.",
+    image: "/services/commercial-office-cleaning.webp",
+    imageWidth: 1672,
+    imageHeight: 941,
   },
   {
     slug: "deep-post-construction-cleaning-dubai",
     number: "02",
     title: "Deep & post-construction cleaning",
     copy: "Detailed cleaning for properties preparing for use, reopening or handover.",
+    image: "/services/post-construction-cleaning.webp",
+    imageWidth: 1536,
+    imageHeight: 1024,
   },
   {
     slug: "building-maintenance-dubai",
     number: "03",
     title: "Building maintenance",
     copy: "Civil works, painting, carpentry, flooring, preventive care and emergency repairs.",
+    image: "/services/building-maintenance.webp",
+    imageWidth: 1660,
+    imageHeight: 948,
   },
   {
     slug: "mep-hvac-maintenance-dubai",
     number: "04",
     title: "MEP & HVAC maintenance",
     copy: "Mechanical, electrical, plumbing and air-conditioning support for managed properties.",
+    image: "/services/mep-hvac-maintenance.webp",
+    imageWidth: 1536,
+    imageHeight: 1024,
   },
   {
     slug: "facility-management-services-uae",
     number: "05",
     title: "Facility management across the UAE",
     copy: "Coordinated cleaning and technical maintenance under one service relationship.",
+    image: "/services/facility-management.webp",
+    imageWidth: 1780,
+    imageHeight: 883,
   },
 ];
 
@@ -274,7 +289,8 @@ export function EvoluraLanding() {
           </div>
         </section>
 
-        <section id="services" className="section-anchor bg-[#f4f8fa] py-24 md:py-32">
+        <section id="services" className="services-section section-anchor bg-[#f4f8fa] py-24 md:py-32">
+          <div className="services-section__halo" aria-hidden="true" />
           <div className="site-shell">
             <div className="reveal grid items-end gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div>
@@ -293,12 +309,24 @@ export function EvoluraLanding() {
             </div>
 
             <div className="mt-14 grid gap-5 lg:grid-cols-2">
-              <article className="service-card service-card--cleaning reveal">
+              <article className="service-card service-card--cleaning reveal reveal--left">
                 <div className="service-card__topline">
                   <span>01 / Cleaning</span>
                   <span>Healthy spaces</span>
                 </div>
-                <div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/services/commercial-office-cleaning.webp"
+                    alt=""
+                    width="1672"
+                    height="941"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Workplace care, delivered with precision</figcaption>
+                </figure>
+                <div className="service-card__intro">
                   <span className="service-card__monogram" aria-hidden="true">
                     CL
                   </span>
@@ -324,12 +352,24 @@ export function EvoluraLanding() {
                 </a>
               </article>
 
-              <article className="service-card service-card--maintenance reveal reveal--delay">
+              <article className="service-card service-card--maintenance reveal reveal--right">
                 <div className="service-card__topline">
                   <span>02 / Maintenance</span>
                   <span>Reliable solutions</span>
                 </div>
-                <div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/services/mep-hvac-maintenance.webp"
+                    alt=""
+                    width="1536"
+                    height="1024"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>Technical expertise, ready when you need it</figcaption>
+                </figure>
+                <div className="service-card__intro">
                   <span className="service-card__monogram" aria-hidden="true">
                     MT
                   </span>
@@ -356,23 +396,50 @@ export function EvoluraLanding() {
               </article>
             </div>
 
-            <div className="seo-services-heading">
+            <div className="seo-services-heading reveal">
               <div>
                 <p className="section-kicker">Explore by service</p>
-                <h3>Detailed cleaning and maintenance services for Dubai properties.</h3>
+                <h3 id="explore-services-heading">
+                  Find the right expertise for every corner of your property.
+                </h3>
               </div>
-              <p>
-                Each page explains the service scope, properties supported and how to
-                request a tailored visit across the United Arab Emirates.
-              </p>
+              <div className="seo-services-heading__side">
+                <p>
+                  Explore each service scope, the properties we support and how to arrange
+                  a tailored visit across the United Arab Emirates.
+                </p>
+                <div className="seo-services-heading__meta" aria-label="Five services available across Dubai and the UAE">
+                  <span>05 focused services</span>
+                  <i aria-hidden="true" />
+                  <span>Dubai + UAE</span>
+                </div>
+              </div>
             </div>
-            <div className="seo-services-grid">
-              {serviceHighlights.map((service) => (
-                <a href={`/services/${service.slug}`} key={service.slug}>
-                  <span>{service.number}</span>
-                  <h3>{service.title}</h3>
-                  <p>{service.copy}</p>
-                  <i aria-hidden="true">↗</i>
+            <div className="seo-services-grid" aria-labelledby="explore-services-heading">
+              {serviceHighlights.map((service, index) => (
+                <a
+                  className={`seo-service-card seo-service-card--${index + 1} reveal`}
+                  href={`/services/${service.slug}`}
+                  key={service.slug}
+                >
+                  <figure className="seo-service-card__media">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={service.image}
+                      alt=""
+                      width={service.imageWidth}
+                      height={service.imageHeight}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>{service.number}</span>
+                  </figure>
+                  <div className="seo-service-card__body">
+                    <span className="seo-service-card__eyebrow">View service</span>
+                    <h3>{service.title}</h3>
+                    <p>{service.copy}</p>
+                    <i aria-hidden="true">↗</i>
+                  </div>
                 </a>
               ))}
             </div>
@@ -478,13 +545,13 @@ export function EvoluraLanding() {
 
         <section className="coverage-section py-24 md:py-32" aria-labelledby="coverage-heading">
           <div className="site-shell grid gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-end lg:gap-24">
-            <div>
+            <div className="reveal reveal--left">
               <p className="section-kicker">Dubai based · UAE coverage</p>
               <h2 id="coverage-heading" className="section-title mt-5">
                 Facility care for properties across the United Arab Emirates.
               </h2>
             </div>
-            <div>
+            <div className="reveal reveal--right">
               <p className="coverage-section__lead">
                 Based in Al Barsha 1, Dubai, Evolura accepts cleaning, building maintenance,
                 MEP, HVAC and facility management requests across the UAE. Coverage and
@@ -502,13 +569,13 @@ export function EvoluraLanding() {
 
         <section className="home-faq py-24 md:py-32" aria-labelledby="home-faq-heading">
           <div className="site-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-24">
-            <div>
+            <div className="reveal reveal--left">
               <p className="section-kicker">Frequently asked questions</p>
               <h2 id="home-faq-heading" className="section-title mt-5">
                 Cleaning and maintenance answers for UAE properties.
               </h2>
             </div>
-            <div className="faq-list">
+            <div className="faq-list reveal reveal--right">
               {homeFaqs.map((faq) => (
                 <details key={faq.question}>
                   <summary>
