@@ -4,18 +4,18 @@ import { SITE_URL, homeFaqs } from "./seo-content";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
+    absolute: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
   },
   description:
-    "Evolura provides commercial cleaning, deep cleaning, MEP, HVAC, plumbing, electrical and building maintenance in Dubai and across the UAE. Request a quote.",
+    "Professional commercial and office cleaning, building maintenance, HVAC and facility management services in Dubai and across the UAE. Get a free quote.",
   alternates: {
     canonical: SITE_URL,
   },
   openGraph: {
     url: SITE_URL,
-    title: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
+    title: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
     description:
-      "Commercial cleaning, deep cleaning, MEP, HVAC and building maintenance services in Dubai and across the UAE.",
+      "Commercial cleaning, office cleaning, building maintenance, HVAC and facility management services in Dubai and across the UAE.",
     images: [
       {
         url: "/og.png",

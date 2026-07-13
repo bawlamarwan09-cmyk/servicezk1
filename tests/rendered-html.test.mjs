@@ -35,23 +35,48 @@ test("server-renders the complete Evolura landing page", async () => {
 
   const html = await response.text();
   assert.match(html, /<html lang="en-AE">/i);
-  assert.match(html, /<title>Commercial Cleaning &amp; Maintenance Services Dubai \| Evolura<\/title>/i);
+  assert.match(
+    html,
+    /<title>Commercial Cleaning &amp; Building Maintenance Dubai \| Evolura<\/title>/i,
+  );
   assert.match(
     html,
     /<link rel="canonical" href="https:\/\/evolura-technical-services\.bawlamarwan09\.chatgpt\.site"/i,
   );
-  assert.match(html, /Commercial cleaning\./i);
-  assert.match(html, /Building maintenance\./i);
-  assert.match(html, /Dubai &amp; UAE\./i);
-  assert.match(html, /Request a service/i);
+  assert.match(html, /Commercial Cleaning &amp;/i);
+  assert.match(html, /Building Maintenance/i);
+  assert.match(html, /in Dubai &amp; UAE/i);
+  assert.match(html, /Get a Free WhatsApp Quote/i);
+  assert.match(html, /Request a Free Quote/i);
   assert.match(html, /id="request-service"/i);
-  assert.match(html, /name="phone"/i);
-  assert.match(html, /name="service"/i);
+
+  const quoteForm = html.match(
+    /<form[^>]*class="[^"]*\brequest-form\b[^"]*"[^>]*>[\s\S]*?<\/form>/i,
+  )?.[0];
+  assert.ok(quoteForm, "the free-quote form should be server-rendered");
+  assert.deepEqual(
+    [...quoteForm.matchAll(/\bname="([^"]+)"/gi)].map((match) => match[1]),
+    ["name", "phone", "service", "location", "message"],
+    "the quote form should contain exactly the five approved fields",
+  );
+  assert.doesNotMatch(quoteForm, /\bname="(?:email|property|date|consent)"/i);
+  assert.doesNotMatch(quoteForm, /type="checkbox"/i);
+
   assert.match(html, /info@evolurats\.com/i);
   assert.match(html, /LocalBusiness/i);
   assert.match(html, /FAQPage/i);
   assert.match(html, /commercial-office-cleaning-dubai/i);
   assert.match(html, /facility-management-services-uae/i);
+  assert.match(
+    html,
+    /Current images are illustrative service previews[\s\S]{0,30}not client projects/i,
+  );
+  assert.doesNotMatch(html, /AggregateRating|ratingValue|reviewCount|testimonial/i);
+  assert.doesNotMatch(
+    html,
+    /\b\d{2,}\+\s*(?:clients?|customers?|projects?|reviews?|years?|sites?)\b/i,
+  );
+  assert.doesNotMatch(html, /\b(?:award[- ]winning|ISO(?:\s+\d+)? certified|#1|best[- ]rated)\b/i);
   assert.doesNotMatch(html, /<meta[^>]+name="keywords"/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
@@ -114,9 +139,12 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(component, /https:\/\/wa\.me\/971503112307/);
   assert.match(component, /aria-live="polite"/);
   assert.match(component, /Skip to main content/);
-  assert.match(component, /type="checkbox" required/);
+  assert.match(component, /Request a Free Quote/);
+  assert.doesNotMatch(component, /type="checkbox"/);
+  assert.doesNotMatch(component, /name="(?:email|property|date|consent)"/);
   assert.match(styles, /prefers-reduced-motion:\s*reduce/);
   assert.match(styles, /scroll-margin-top/);
+  assert.match(page, /Commercial Cleaning & Building Maintenance Dubai \| Evolura/);
   assert.match(layout, /Evolura Technical Services/);
   assert.match(layout, /LocalBusiness/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);

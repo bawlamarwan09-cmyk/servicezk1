@@ -11,11 +11,11 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
+    default: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
     template: "%s | Evolura",
   },
   description:
-    "Evolura provides commercial cleaning, deep cleaning, MEP, HVAC, plumbing, electrical and building maintenance in Dubai and across the UAE.",
+    "Professional commercial and office cleaning, building maintenance, HVAC and facility management services in Dubai and across the UAE.",
   applicationName: "Evolura Technical Services",
   authors: [{ name: "Evolura Technical Services" }],
   creator: "Evolura Technical Services",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     locale: "en_AE",
     url: SITE_URL,
     siteName: "Evolura Technical Services",
-    title: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
+    title: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
     description:
       "Commercial cleaning, building maintenance, MEP, HVAC and facility management services in Dubai and across the UAE.",
     images: [
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Commercial Cleaning & Maintenance Services Dubai | Evolura",
+    title: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
     description:
       "Commercial cleaning, building maintenance, MEP, HVAC and facility management services in Dubai and across the UAE.",
     images: ["/og.png"],
