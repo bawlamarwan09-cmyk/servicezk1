@@ -531,7 +531,7 @@ export function EvoluraLanding() {
             <div className="seo-services-grid" aria-labelledby="explore-services-heading">
               {serviceHighlights.map((service, index) => (
                 <a
-                  className={`seo-service-card seo-service-card--${index + 1} reveal`}
+                  className={`seo-service-card seo-service-card--${index + 1}`}
                   href={`/services/${service.slug}`}
                   key={service.slug}
                 >

@@ -67,6 +67,11 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.match(html, /FAQPage/i);
   assert.match(html, /commercial-office-cleaning-dubai/i);
   assert.match(html, /facility-management-services-uae/i);
+  assert.doesNotMatch(
+    html,
+    /class="[^"]*\bseo-service-card\b[^"]*\breveal\b/i,
+    "service cards must remain fully opaque while they enter the viewport",
+  );
   assert.match(
     html,
     /Current images are illustrative service previews[\s\S]{0,30}not client projects/i,
