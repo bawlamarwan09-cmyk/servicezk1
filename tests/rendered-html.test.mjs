@@ -145,9 +145,11 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(component, /aria-live="polite"/);
   assert.match(component, /Skip to main content/);
   assert.match(component, /Request a Free Quote/);
+  assert.doesNotMatch(component, /<span>\{service\.number\}<\/span>/);
   assert.doesNotMatch(component, /type="checkbox"/);
   assert.doesNotMatch(component, /name="(?:email|property|date|consent)"/);
   assert.match(styles, /prefers-reduced-motion:\s*reduce/);
+  assert.match(styles, /@keyframes service-card-scroll-lift/);
   assert.match(styles, /scroll-margin-top/);
   assert.match(page, /Commercial Cleaning & Building Maintenance Dubai \| Evolura/);
   assert.match(layout, /Evolura Technical Services/);

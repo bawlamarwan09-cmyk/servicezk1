@@ -415,7 +415,7 @@ export function EvoluraLanding() {
             </div>
 
             <div id="service-categories" className="section-anchor mt-14 grid gap-5 lg:grid-cols-2">
-              <article className="service-card service-card--cleaning reveal reveal--left">
+              <article className="service-card service-card--cleaning scroll-lift-card">
                 <div className="service-card__topline">
                   <span>01 / Cleaning</span>
                   <span>Healthy spaces</span>
@@ -460,7 +460,7 @@ export function EvoluraLanding() {
                 </a>
               </article>
 
-              <article className="service-card service-card--maintenance reveal reveal--right">
+              <article className="service-card service-card--maintenance scroll-lift-card">
                 <div className="service-card__topline">
                   <span>02 / Maintenance</span>
                   <span>Reliable solutions</span>
@@ -531,7 +531,7 @@ export function EvoluraLanding() {
             <div className="seo-services-grid" aria-labelledby="explore-services-heading">
               {serviceHighlights.map((service, index) => (
                 <a
-                  className={`seo-service-card seo-service-card--${index + 1}`}
+                  className={`seo-service-card seo-service-card--${index + 1} scroll-lift-card`}
                   href={`/services/${service.slug}`}
                   key={service.slug}
                 >
@@ -547,7 +547,6 @@ export function EvoluraLanding() {
                       loading="lazy"
                       decoding="async"
                     />
-                    <span>{service.number}</span>
                   </figure>
                   <div className="seo-service-card__body">
                     <div className="seo-service-card__meta">
