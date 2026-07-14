@@ -12,9 +12,6 @@ export const BUSINESS = {
     "https://maps.google.com/?q=Levana+Residence+Al+Barsha+1+Dubai",
 } as const;
 
-export const DEFAULT_WHATSAPP_QUOTE_URL =
-  `https://wa.me/${BUSINESS.whatsappNumber}`;
-
 
 export const SERVICE_OPTIONS = [
   {
@@ -63,4 +60,16 @@ export function isServiceOption(
   return SERVICE_OPTIONS.some(
     (service) => service.value === value,
   );
+}
+export const DEFAULT_WHATSAPP_QUOTE_URL =
+  `https://wa.me/${BUSINESS.whatsappNumber}`;
+
+export function createWhatsAppUrl(message?: string): string {
+  const baseUrl = `https://wa.me/${BUSINESS.whatsappNumber}`;
+
+  if (!message) {
+    return baseUrl;
+  }
+
+  return `${baseUrl}?text=${encodeURIComponent(message)}`;
 }

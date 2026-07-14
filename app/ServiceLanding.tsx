@@ -9,7 +9,10 @@ import {
   servicePages,
   type ServicePageContent,
 } from "./seo-content";
-import { BUSINESS, createWhatsAppUrl } from "./site-config";
+import {
+  BUSINESS,
+  createWhatsAppUrl,
+} from "./site-config";
 
 export function createServiceMetadata(page: ServicePageContent) {
   return createPageMetadata({
