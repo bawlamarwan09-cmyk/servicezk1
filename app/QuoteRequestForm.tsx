@@ -3,9 +3,7 @@
 import { FormEvent, MouseEvent, ReactNode, useEffect, useState } from "react";
 import {
   BUSINESS,
-  DEFAULT_WHATSAPP_QUOTE_URL,
   SERVICE_OPTIONS,
-  createWhatsAppUrl,
   getServiceLabel,
   isServiceOption,
 } from "./site-config";
@@ -48,12 +46,16 @@ export function QuoteRequestLink({
         );
         const requestSection = document.getElementById("request-service");
         requestSection?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
             ? "auto"
             : "smooth",
           block: "start",
         });
-        window.setTimeout(() => requestSection?.focus({ preventScroll: true }), 0);
+        window.setTimeout(
+          () => requestSection?.focus({ preventScroll: true }),
+          0,
+        );
       }}
     >
       {children}
@@ -63,28 +65,34 @@ export function QuoteRequestLink({
 
 export function QuoteRequestForm() {
   const [formStatus, setFormStatus] = useState("");
-  const [formStatusType, setFormStatusType] = useState<"success" | "error" | "">("");
+  const [formStatusType, setFormStatusType] = useState<
+    "success" | "error" | ""
+  >("");
   const [selectedService, setSelectedService] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isInteractive, setIsInteractive] = useState(false);
-  const [preparedUrl, setPreparedUrl] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     window.queueMicrotask(() => setIsInteractive(true));
-    const requestedService = new URLSearchParams(window.location.search).get("service");
+    const requestedService = new URLSearchParams(window.location.search).get(
+      "service",
+    );
     if (requestedService && isServiceOption(requestedService)) {
       window.queueMicrotask(() => setSelectedService(requestedService));
     }
 
     const selectService = (event: Event) => {
-      const service = (event as CustomEvent<{ service?: string }>).detail?.service;
+      const service = (event as CustomEvent<{ service?: string }>).detail
+        ?.service;
       if (!service || !isServiceOption(service)) return;
       setSelectedService(service);
       setFieldErrors((current) => ({ ...current, service: undefined }));
     };
 
     window.addEventListener("evolura:select-service", selectService);
-    return () => window.removeEventListener("evolura:select-service", selectService);
+    return () =>
+      window.removeEventListener("evolura:select-service", selectService);
   }, []);
 
   const clearError = (field: FieldName) => {
@@ -94,7 +102,7 @@ export function QuoteRequestForm() {
     });
   };
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -107,12 +115,16 @@ export function QuoteRequestForm() {
       errors.phone = "Enter your phone or WhatsApp number.";
     } else if (!/^[+()\d\s-]+$/.test(phone)) {
       errors.phone = "Use only numbers, spaces, +, parentheses or hyphens.";
-    } else if (phone.replace(/\D/g, "").length < 7 || phone.replace(/\D/g, "").length > 15) {
+    } else if (
+      phone.replace(/\D/g, "").length < 7 ||
+      phone.replace(/\D/g, "").length > 15
+    ) {
       errors.phone = "Enter a phone number containing 7 to 15 digits.";
     }
     if (!value("service")) errors.service = "Choose the service you need.";
     if (!value("location")) errors.location = "Enter the property location.";
-    if (!value("message")) errors.message = "Describe the space, issue or timing.";
+    if (!value("message"))
+      errors.message = "Describe the space, issue or timing.";
 
     const firstInvalidField = (Object.keys(fieldIds) as FieldName[]).find(
       (field) => errors[field],
@@ -122,33 +134,62 @@ export function QuoteRequestForm() {
       setFieldErrors(errors);
       setFormStatus("Please review the highlighted fields.");
       setFormStatusType("error");
-      window.setTimeout(() => document.getElementById(fieldIds[firstInvalidField])?.focus(), 0);
+      window.setTimeout(
+        () => document.getElementById(fieldIds[firstInvalidField])?.focus(),
+        0,
+      );
       return;
     }
 
     setFieldErrors({});
-    const message = [
-      "Hello Evolura, I would like to request a service.",
-      "",
-      `Name: ${value("name")}`,
-      `Phone / WhatsApp: ${value("phone")}`,
-      `Service: ${getServiceLabel(value("service"))}`,
-      `Location: ${value("location")}`,
-      `Request details: ${value("message")}`,
-    ].join("\n");
+    setIsSubmitting(true);
+    setFormStatus("Sending your request...");
+    setFormStatusType("");
 
-    const whatsappUrl = createWhatsAppUrl(message);
-    setPreparedUrl(whatsappUrl);
-    const opened = window.open("", "_blank");
+    const payload = {
+      name: value("name"),
+      phone: value("phone"),
+      service: value("service"),
+      serviceLabel: getServiceLabel(value("service")),
+      location: value("location"),
+      message: value("message"),
+      source: "website_quote_form",
+      pageUrl: window.location.href,
+      submittedAt: new Date().toISOString(),
+    };
 
-    if (opened) {
-      opened.opener = null;
-      opened.location.replace(whatsappUrl);
-      setFormStatus("WhatsApp opened with your prepared request. Review the message and tap Send to contact Evolura.");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message || "The request could not be sent.");
+      }
+
+      form.reset();
+      setSelectedService("");
+      setFormStatus(
+        "Thank you. Your request has been received and the Evolura team will contact you shortly.",
+      );
       setFormStatusType("success");
-    } else {
-      setFormStatus("Your browser blocked the new tab. Use the prepared WhatsApp link below.");
+    } catch (error) {
+      setFormStatus(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.",
+      );
       setFormStatusType("error");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -157,7 +198,7 @@ export function QuoteRequestForm() {
       className="request-form reveal reveal--delay"
       aria-labelledby="quote-form-heading"
       aria-describedby="quote-form-instructions quote-form-privacy"
-      action="/contact"
+      action="/api/contact"
       method="post"
       onSubmit={handleSubmit}
       noValidate
@@ -168,14 +209,14 @@ export function QuoteRequestForm() {
       </div>
 
       <p id="quote-form-instructions" className="form-instructions">
-        Complete the form to prepare a WhatsApp message. Submitting transfers the details to
-        WhatsApp so you can review them before choosing whether to tap Send.
+        Complete the form and submit your request directly to the Evolura
+        service team.
       </p>
 
       <noscript>
         <p className="form-noscript">
-          This interactive form requires JavaScript. Please call Evolura or use the direct
-          WhatsApp link instead.
+          This interactive form requires JavaScript. Please call or email
+          Evolura instead.
         </p>
       </noscript>
 
@@ -195,7 +236,11 @@ export function QuoteRequestForm() {
             onInput={() => clearError("name")}
             required
           />
-          {fieldErrors.name ? <span className="field-error" id={`${fieldIds.name}-error`}>{fieldErrors.name}</span> : null}
+          {fieldErrors.name ? (
+            <span className="field-error" id={`${fieldIds.name}-error`}>
+              {fieldErrors.name}
+            </span>
+          ) : null}
         </div>
         <div className="form-field">
           <label htmlFor={fieldIds.phone}>Phone / WhatsApp *</label>
@@ -214,7 +259,11 @@ export function QuoteRequestForm() {
             onInput={() => clearError("phone")}
             required
           />
-          {fieldErrors.phone ? <span className="field-error" id={`${fieldIds.phone}-error`}>{fieldErrors.phone}</span> : null}
+          {fieldErrors.phone ? (
+            <span className="field-error" id={`${fieldIds.phone}-error`}>
+              {fieldErrors.phone}
+            </span>
+          ) : null}
         </div>
         <div className="form-field">
           <label htmlFor={fieldIds.service}>Service needed *</label>
@@ -231,12 +280,20 @@ export function QuoteRequestForm() {
             }}
             required
           >
-            <option value="" disabled>Select a service</option>
+            <option value="" disabled>
+              Select a service
+            </option>
             {SERVICE_OPTIONS.map((service) => (
-              <option value={service.value} key={service.value}>{service.label}</option>
+              <option value={service.value} key={service.value}>
+                {service.label}
+              </option>
             ))}
           </select>
-          {fieldErrors.service ? <span className="field-error" id={`${fieldIds.service}-error`}>{fieldErrors.service}</span> : null}
+          {fieldErrors.service ? (
+            <span className="field-error" id={`${fieldIds.service}-error`}>
+              {fieldErrors.service}
+            </span>
+          ) : null}
         </div>
         <div className="form-field">
           <label htmlFor={fieldIds.location}>Property location *</label>
@@ -253,7 +310,11 @@ export function QuoteRequestForm() {
             onInput={() => clearError("location")}
             required
           />
-          {fieldErrors.location ? <span className="field-error" id={`${fieldIds.location}-error`}>{fieldErrors.location}</span> : null}
+          {fieldErrors.location ? (
+            <span className="field-error" id={`${fieldIds.location}-error`}>
+              {fieldErrors.location}
+            </span>
+          ) : null}
         </div>
         <div className="form-field form-field--full">
           <label htmlFor={fieldIds.message}>How can we help? *</label>
@@ -269,35 +330,37 @@ export function QuoteRequestForm() {
             onInput={() => clearError("message")}
             required
           />
-          {fieldErrors.message ? <span className="field-error" id={`${fieldIds.message}-error`}>{fieldErrors.message}</span> : null}
+          {fieldErrors.message ? (
+            <span className="field-error" id={`${fieldIds.message}-error`}>
+              {fieldErrors.message}
+            </span>
+          ) : null}
         </div>
       </div>
 
       <p id="quote-form-privacy" className="form-privacy-note">
-        This website does not store these fields in an Evolura database. Submitting passes the
-        details to WhatsApp to prepare a message; Evolura receives them only if you tap Send.
-        {" "}<a href="/privacy">Read the privacy explanation.</a>
+        Your details are sent securely to Evolura's contact workflow so the team
+        can review your request and respond.{" "}
+        <a href="/privacy">Read the privacy explanation.</a>
       </p>
 
       <div className="form-submit-row">
         <div className="form-submit-actions">
-          <button type="submit" disabled={!isInteractive}>Continue on WhatsApp <span aria-hidden="true">↗</span></button>
-          <a href={DEFAULT_WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer" aria-label="Open WhatsApp (opens in a new tab)">
-            WhatsApp us <span aria-hidden="true">↗</span>
-          </a>
+          <button type="submit" disabled={!isInteractive || isSubmitting}>
+            {isSubmitting ? "Sending..." : "Submit request"}
+          </button>
         </div>
         <p
-          className={formStatusType ? `form-status form-status--${formStatusType}` : "form-status"}
+          className={
+            formStatusType
+              ? `form-status form-status--${formStatusType}`
+              : "form-status"
+          }
           role={formStatusType === "error" ? "alert" : "status"}
           aria-live={formStatusType === "error" ? "assertive" : "polite"}
         >
           {formStatus}
         </p>
-        {preparedUrl && formStatusType === "error" ? (
-          <a className="prepared-whatsapp-link" href={preparedUrl} target="_blank" rel="noreferrer">
-            Open the prepared WhatsApp request <span aria-hidden="true">↗</span>
-          </a>
-        ) : null}
       </div>
       <span className="sr-only">Contact number: {BUSINESS.phoneDisplay}</span>
     </form>
