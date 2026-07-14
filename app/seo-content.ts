@@ -1,25 +1,61 @@
-export const SITE_URL =
+const FALLBACK_SITE_URL =
   "https://evolura-technical-services.bawlamarwan09.chatgpt.site";
+
+function normalizeSiteUrl(value: string | undefined): string {
+  if (!value) return FALLBACK_SITE_URL;
+
+  try {
+    const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+    return new URL(withProtocol).origin;
+  } catch {
+    return FALLBACK_SITE_URL;
+  }
+}
+
+export const SITE_URL = normalizeSiteUrl(
+  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_PROJECT_PRODUCTION_URL,
+);
+
+// Update this only when indexable content changes; sitemap dates should describe real edits.
+export const CONTENT_LAST_MODIFIED = new Date("2026-07-14T00:00:00.000Z");
 
 export type FaqItem = {
   question: string;
   answer: string;
 };
 
+export type ServiceSlug =
+  | "commercial-office-cleaning-dubai"
+  | "deep-post-construction-cleaning-dubai"
+  | "building-maintenance-dubai"
+  | "mep-hvac-maintenance-dubai"
+  | "facility-management-services-uae";
+
 export type ServicePageContent = {
-  slug: string;
+  slug: ServiceSlug;
   shortTitle: string;
+  directoryTitle: string;
+  directoryDescription: string;
+  code: string;
+  image: {
+    src: string;
+    srcSmall: string;
+    alt: string;
+  };
   metaTitle: string;
   metaDescription: string;
   eyebrow: string;
   title: string;
+  overviewHeading: string;
+  inclusionsHeading: string;
+  serviceFormat: string;
   introduction: string;
   summary: string;
   inclusions: Array<{ title: string; copy: string }>;
   propertyTypes: string[];
   standards: string[];
   faqs: FaqItem[];
-  related: string[];
+  related: ServiceSlug[];
 };
 
 export const homeFaqs: FaqItem[] = [
@@ -41,24 +77,46 @@ export const homeFaqs: FaqItem[] = [
   {
     question: "Can I request urgent maintenance support?",
     answer:
-      "Yes. Evolura offers 24/7 support and quick response for urgent breakdown and emergency repair requests, subject to location, team availability and the nature of the issue.",
+      "Yes. Evolura accepts urgent breakdown and emergency repair requests. Availability and timing are confirmed after reviewing the issue, property location, access and the team required.",
   },
   {
     question: "How do I request a cleaning or maintenance quotation?",
     answer:
-      "Complete the service request form with your location, service type and a short description. The form prepares a WhatsApp message so our team can review the scope and arrange the next step.",
+      "Complete the service request form with your location, service type and a short description. The form prepares a WhatsApp message for you to review and send. After you send it, Evolura can review the scope and arrange the next step.",
+  },
+  {
+    question: "What information should I include in a quote request?",
+    answer:
+      "Include the property location, service needed, a short description of the space or issue, preferred timing and any access details. These details help Evolura review the scope and confirm the next step.",
+  },
+  {
+    question: "What helps determine the recommended service scope?",
+    answer:
+      "The property type, condition, areas included, requested frequency, timing and access requirements help determine the appropriate cleaning or maintenance scope.",
   },
 ];
 
-export const servicePages: Record<string, ServicePageContent> = {
+export const servicePages: Record<ServiceSlug, ServicePageContent> = {
   "commercial-office-cleaning-dubai": {
     slug: "commercial-office-cleaning-dubai",
     shortTitle: "Commercial cleaning",
+    directoryTitle: "Commercial & office cleaning",
+    directoryDescription:
+      "Scheduled workplace cleaning, floors, carpets, windows and washroom hygiene in Dubai.",
+    code: "CL",
+    image: {
+      src: "/services/commercial-office-cleaning.webp",
+      srcSmall: "/services/commercial-office-cleaning-720.webp",
+      alt: "Professional cleaner wiping a glass partition in a modern office",
+    },
     metaTitle: "Commercial Cleaning Services Dubai | Evolura",
     metaDescription:
       "Professional office and commercial cleaning in Dubai and across the UAE, including scheduled cleaning, floors, carpets, windows and washroom hygiene.",
     eyebrow: "Commercial cleaning services · Dubai & UAE",
     title: "Commercial and office cleaning services in Dubai",
+    overviewHeading: "Commercial cleaning plans for workplaces and managed properties",
+    inclusionsHeading: "What commercial and office cleaning can include",
+    serviceFormat: "Daily, weekly, periodic or focused one-off support",
     introduction:
       "A clean workplace protects the experience of employees, visitors and customers. Evolura provides professional commercial cleaning services for offices and managed properties, with plans shaped around the space, operating hours and required frequency.",
     summary:
@@ -97,9 +155,9 @@ export const servicePages: Record<string, ServicePageContent> = {
     ],
     standards: [
       "A cleaning plan matched to the space and schedule",
-      "Trained and verified service staff",
+      "Trained service staff",
       "Quality checks and clear communication",
-      "Safe, eco-conscious working practices",
+      "A cleaning approach agreed for the surfaces and scope",
     ],
     faqs: [
       {
@@ -128,15 +186,27 @@ export const servicePages: Record<string, ServicePageContent> = {
   "deep-post-construction-cleaning-dubai": {
     slug: "deep-post-construction-cleaning-dubai",
     shortTitle: "Deep cleaning",
+    directoryTitle: "Deep & post-construction cleaning",
+    directoryDescription:
+      "Detailed cleaning for properties preparing for use, reopening or handover.",
+    code: "DC",
+    image: {
+      src: "/services/post-construction-cleaning.webp",
+      srcSmall: "/services/post-construction-cleaning-720.webp",
+      alt: "Cleaning team removing fine dust from a newly finished commercial interior",
+    },
     metaTitle: "Deep & Post-Construction Cleaning Dubai | Evolura",
     metaDescription:
       "Deep cleaning and post-construction cleaning in Dubai and the UAE for offices, commercial properties and managed buildings. Request a tailored service.",
     eyebrow: "Deep cleaning services · Dubai & UAE",
     title: "Deep and post-construction cleaning in Dubai",
+    overviewHeading: "Deep cleaning for handover, reopening and periodic resets",
+    inclusionsHeading: "What deep and post-construction cleaning can include",
+    serviceFormat: "One-off deep cleaning or post-construction reset",
     introduction:
       "Renovation dust, built-up residue and hard-to-reach areas require a more detailed approach than routine cleaning. Evolura provides deep and post-construction cleaning for properties that need a thorough reset before use, handover or reopening.",
     summary:
-      "We review the space, surfaces and priority areas before confirming the scope. The service can combine detailed surface cleaning, floor care, carpet and upholstery attention, window cleaning and washroom sanitization for a cleaner, safer handover.",
+      "We review the space, surfaces and priority areas before confirming the scope. The service can combine detailed surface cleaning, floor care, carpet and upholstery attention, window cleaning and washroom sanitization for a cleaner, more presentable handover.",
     inclusions: [
       {
         title: "Post-construction cleaning",
@@ -202,11 +272,23 @@ export const servicePages: Record<string, ServicePageContent> = {
   "building-maintenance-dubai": {
     slug: "building-maintenance-dubai",
     shortTitle: "Building maintenance",
+    directoryTitle: "Building maintenance",
+    directoryDescription:
+      "Civil works, painting, carpentry, flooring, preventive care and urgent repair support.",
+    code: "BM",
+    image: {
+      src: "/services/building-maintenance.webp",
+      srcSmall: "/services/building-maintenance-720.webp",
+      alt: "Building maintenance technician repairing a door fitting",
+    },
     metaTitle: "Building Maintenance Services Dubai | Evolura",
     metaDescription:
       "Building maintenance services in Dubai and the UAE, including civil works, MEP, HVAC, painting, carpentry, flooring and emergency repairs.",
     eyebrow: "Building maintenance services · Dubai & UAE",
     title: "Reliable building maintenance services in Dubai",
+    overviewHeading: "Planned and responsive building maintenance",
+    inclusionsHeading: "Building maintenance services available",
+    serviceFormat: "Preventive, corrective and urgent repair support",
     introduction:
       "Small defects can quickly affect safety, comfort and the day-to-day use of a property. Evolura coordinates building maintenance services for commercial and managed facilities, from planned preventive care to breakdown and emergency repair requests.",
     summary:
@@ -247,7 +329,7 @@ export const servicePages: Record<string, ServicePageContent> = {
       "The right maintenance trade for the reported issue",
       "Preventive and corrective service options",
       "Clear scope communication before work begins",
-      "24/7 support for urgent requests",
+      "Urgent requests reviewed for location, access and availability",
     ],
     faqs: [
       {
@@ -276,11 +358,23 @@ export const servicePages: Record<string, ServicePageContent> = {
   "mep-hvac-maintenance-dubai": {
     slug: "mep-hvac-maintenance-dubai",
     shortTitle: "MEP & HVAC",
+    directoryTitle: "MEP & HVAC maintenance",
+    directoryDescription:
+      "Mechanical, electrical, plumbing and air-conditioning support for managed properties.",
+    code: "HV",
+    image: {
+      src: "/services/mep-hvac-maintenance.webp",
+      srcSmall: "/services/mep-hvac-maintenance-720.webp",
+      alt: "HVAC technician checking an air-handling control panel",
+    },
     metaTitle: "MEP & HVAC Maintenance Dubai | Evolura",
     metaDescription:
       "MEP and HVAC maintenance in Dubai and the UAE, covering mechanical, electrical, plumbing and air-conditioning support for managed properties.",
     eyebrow: "MEP & HVAC maintenance · Dubai & UAE",
     title: "MEP and HVAC maintenance services in Dubai",
+    overviewHeading: "Mechanical, electrical, plumbing and HVAC support",
+    inclusionsHeading: "What MEP and HVAC maintenance can include",
+    serviceFormat: "Preventive maintenance, troubleshooting and responsive repair support",
     introduction:
       "Mechanical, electrical, plumbing and HVAC systems are central to a safe, comfortable building. Evolura provides coordinated MEP and HVAC maintenance for properties that need preventive attention, troubleshooting or responsive repair support.",
     summary:
@@ -350,11 +444,23 @@ export const servicePages: Record<string, ServicePageContent> = {
   "facility-management-services-uae": {
     slug: "facility-management-services-uae",
     shortTitle: "Facility management",
-    metaTitle: "Facility Management Services UAE | Evolura",
+    directoryTitle: "Facility management across the UAE",
+    directoryDescription:
+      "Coordinated cleaning and technical maintenance under one service relationship.",
+    code: "FM",
+    image: {
+      src: "/services/facility-management.webp",
+      srcSmall: "/services/facility-management-720.webp",
+      alt: "Facility manager reviewing a tablet in a modern building lobby",
+    },
+    metaTitle: "Integrated Facility Management Services UAE | Evolura",
     metaDescription:
-      "Coordinated facility management services across the UAE, combining commercial cleaning, building maintenance, MEP, HVAC and responsive support.",
+      "Integrated facility cleaning and maintenance across the UAE, combining commercial cleaning, building maintenance, MEP, HVAC and responsive support.",
     eyebrow: "Facility management services · UAE",
-    title: "Cleaning and facility management services across the UAE",
+    title: "Integrated facility cleaning and maintenance across the UAE",
+    overviewHeading: "One service relationship for cleaning and technical maintenance",
+    inclusionsHeading: "Integrated facility services available",
+    serviceFormat: "Recurring cleaning with planned or responsive maintenance support",
     introduction:
       "Well-managed facilities depend on consistent cleaning, responsive maintenance and clear communication. Evolura brings these services together for offices, commercial spaces and managed properties in Dubai and across the United Arab Emirates.",
     summary:
@@ -382,7 +488,7 @@ export const servicePages: Record<string, ServicePageContent> = {
       },
       {
         title: "Responsive support",
-        copy: "Breakdown and emergency repair requests reviewed through our 24/7 support channel.",
+        copy: "Breakdown and emergency repair requests reviewed based on the issue, location, access and team availability.",
       },
     ],
     propertyTypes: [

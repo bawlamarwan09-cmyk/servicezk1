@@ -1,12 +1,11 @@
-"use client";
-
-import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { MobileContactBar } from "./MobileContactBar";
+import { QuoteRequestForm, QuoteRequestLink } from "./QuoteRequestForm";
+import { ServiceDirectory } from "./ServiceDirectory";
+import { SiteHeader } from "./SiteHeader";
+import { SiteFooter } from "./SiteFooter";
 import { homeFaqs } from "./seo-content";
-
-const WHATSAPP_NUMBER = "971503112307";
-const WHATSAPP_QUOTE_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hello Evolura, I would like a free quote for cleaning or building maintenance.",
-)}`;
+import { BUSINESS, DEFAULT_WHATSAPP_QUOTE_URL } from "./site-config";
 
 const cleaningServices = [
   "Office & commercial cleaning",
@@ -27,50 +26,50 @@ const maintenanceServices = [
 const differentiators = [
   {
     number: "01",
-    title: "Trained & verified staff",
-    copy: "Professional teams selected for care, conduct and consistent workmanship.",
+    title: "Trained service teams",
+    copy: "Professional staff selected for care, conduct and consistent workmanship.",
   },
   {
     number: "02",
-    title: "Quality assurance",
-    copy: "Clear standards and attentive supervision from first visit to final check.",
+    title: "Scope confirmed first",
+    copy: "Timing, access and the requested work are reviewed before service is arranged.",
   },
   {
     number: "03",
-    title: "Flexible service",
+    title: "Flexible service plans",
     copy: "One-time, periodic and ongoing plans shaped around your facility.",
   },
   {
     number: "04",
-    title: "Safe, eco-friendly care",
-    copy: "Thoughtful practices that support healthier people, spaces and surroundings.",
+    title: "Property-aware care",
+    copy: "The service approach is shaped around the space, surfaces, access and agreed scope.",
   },
   {
     number: "05",
-    title: "24/7 quick response",
-    copy: "Reliable support when an urgent repair or service request cannot wait.",
+    title: "Urgent request support",
+    copy: "Urgent repairs are reviewed based on the issue, location, access and availability.",
   },
 ];
 
 const processSteps = [
   ["01", "Tell us what you need", "Share the space, service and preferred timing."],
-  ["02", "Receive a free quotation", "We review the scope and provide a clear next step."],
+  ["02", "Request a quotation", "We review the scope and provide a clear next step."],
   ["03", "Our team completes the service", "The right team arrives and delivers with care."],
 ];
 
 // Replace these qualitative indicators only when approved, verifiable figures are available.
 const trustIndicators = [
   {
-    label: "Fast quotations",
-    copy: "Direct support through WhatsApp or phone.",
+    label: "Dubai based",
+    copy: "Located in Al Barsha 1, Dubai.",
   },
   {
-    label: "Trained teams",
-    copy: "Professional staff selected for care and conduct.",
+    label: "UAE requests",
+    copy: "Coverage and timing are confirmed for each property.",
   },
   {
-    label: "Dubai-wide service",
-    copy: "Support for offices, properties and facilities.",
+    label: "Direct contact",
+    copy: "Contact Evolura by WhatsApp, phone or email.",
   },
   {
     label: "Flexible contracts",
@@ -78,264 +77,81 @@ const trustIndicators = [
   },
 ];
 
-const serviceHighlights = [
-  {
-    slug: "commercial-office-cleaning-dubai",
-    number: "01",
-    title: "Commercial & office cleaning",
-    copy: "Scheduled workplace cleaning, floors, carpets, windows and washroom hygiene in Dubai.",
-    icon: "CL",
-    image: "/services/commercial-office-cleaning.webp",
-    imageSmall: "/services/commercial-office-cleaning-720.webp",
-    imageAlt: "Professional cleaner wiping a glass partition in a modern office",
-  },
-  {
-    slug: "deep-post-construction-cleaning-dubai",
-    number: "02",
-    title: "Deep & post-construction cleaning",
-    copy: "Detailed cleaning for properties preparing for use, reopening or handover.",
-    icon: "DC",
-    image: "/services/post-construction-cleaning.webp",
-    imageSmall: "/services/post-construction-cleaning-720.webp",
-    imageAlt: "Cleaning team removing fine dust from a newly finished commercial interior",
-  },
-  {
-    slug: "building-maintenance-dubai",
-    number: "03",
-    title: "Building maintenance",
-    copy: "Civil works, painting, carpentry, flooring, preventive care and emergency repairs.",
-    icon: "BM",
-    image: "/services/building-maintenance.webp",
-    imageSmall: "/services/building-maintenance-720.webp",
-    imageAlt: "Building maintenance technician repairing a door fitting",
-  },
-  {
-    slug: "mep-hvac-maintenance-dubai",
-    number: "04",
-    title: "MEP & HVAC maintenance",
-    copy: "Mechanical, electrical, plumbing and air-conditioning support for managed properties.",
-    icon: "HV",
-    image: "/services/mep-hvac-maintenance.webp",
-    imageSmall: "/services/mep-hvac-maintenance-720.webp",
-    imageAlt: "HVAC technician checking an air-handling control panel",
-  },
-  {
-    slug: "facility-management-services-uae",
-    number: "05",
-    title: "Facility management across the UAE",
-    copy: "Coordinated cleaning and technical maintenance under one service relationship.",
-    icon: "FM",
-    image: "/services/facility-management.webp",
-    imageSmall: "/services/facility-management-720.webp",
-    imageAlt: "Facility manager reviewing a tablet in a modern building lobby",
-  },
-];
-
-// These are illustrative placeholders, not claimed client projects. Replace with verified project photography.
+// These category images illustrate services and are not presented as client projects.
 const recentWork = [
   {
     title: "Commercial cleaning",
+    slug: "commercial-office-cleaning-dubai",
     image: "/services/commercial-office-cleaning.webp",
     imageSmall: "/services/commercial-office-cleaning-720.webp",
     alt: "Illustrative commercial cleaning service preview",
   },
   {
     title: "Deep cleaning",
+    slug: "deep-post-construction-cleaning-dubai",
     image: "/services/post-construction-cleaning.webp",
     imageSmall: "/services/post-construction-cleaning-720.webp",
     alt: "Illustrative deep cleaning service preview",
   },
   {
     title: "Building maintenance",
+    slug: "building-maintenance-dubai",
     image: "/services/building-maintenance.webp",
     imageSmall: "/services/building-maintenance-720.webp",
     alt: "Illustrative building maintenance service preview",
   },
   {
     title: "HVAC maintenance",
+    slug: "mep-hvac-maintenance-dubai",
     image: "/services/mep-hvac-maintenance.webp",
     imageSmall: "/services/mep-hvac-maintenance-720.webp",
     alt: "Illustrative HVAC maintenance service preview",
   },
   {
     title: "Facility management",
+    slug: "facility-management-services-uae",
     image: "/services/facility-management.webp",
     imageSmall: "/services/facility-management-720.webp",
     alt: "Illustrative facility management service preview",
-  },
-  {
-    title: "Office cleaning",
-    image: "/services/commercial-office-cleaning.webp",
-    imageSmall: "/services/commercial-office-cleaning-720.webp",
-    alt: "Illustrative office cleaning service preview",
   },
 ];
 
 const contactItems = [
   {
     label: "Call us",
-    value: "+971 50 311 2307",
-    href: "tel:+971503112307",
+    value: BUSINESS.phoneDisplay,
+    href: BUSINESS.phoneHref,
   },
   {
     label: "Email",
-    value: "info@evolurats.com",
-    href: "mailto:info@evolurats.com",
+    value: BUSINESS.email,
+    href: `mailto:${BUSINESS.email}`,
   },
   {
     label: "Visit",
-    value: "Ground Floor, Levana Residence, Al Barsha 1, Dubai, UAE",
-    href: "https://maps.google.com/?q=Levana+Residence+Al+Barsha+1+Dubai",
+    value: BUSINESS.shortAddress,
+    href: BUSINESS.mapsUrl,
   },
 ];
 
-function Brand({ inverse = false }: { inverse?: boolean }) {
-  return (
-    <a
-      className={`brand ${inverse ? "brand--inverse" : ""}`}
-      href="#top"
-      aria-label="Evolura Technical Services home"
-    >
-      <span className="brand__mark" aria-hidden="true">
-        E
-      </span>
-      <span className="brand__copy">
-        <strong>EVOLURA</strong>
-        <small>TECHNICAL SERVICES</small>
-      </span>
-    </a>
-  );
-}
-
 export function EvoluraLanding() {
-  const [formStatus, setFormStatus] = useState("");
-  const [formStatusType, setFormStatusType] = useState<"success" | "error" | "">("");
-  const [selectedService, setSelectedService] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-
-  useEffect(() => {
-    const updateHeader = () => setIsHeaderCompact(window.scrollY > 40);
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    return () => window.removeEventListener("scroll", updateHeader);
-  }, []);
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-
-    if (!form.checkValidity()) {
-      setFormStatus("Please complete the required fields before continuing.");
-      setFormStatusType("error");
-      form.reportValidity();
-      return;
-    }
-
-    const data = new FormData(form);
-    const value = (name: string) => String(data.get(name) ?? "").trim();
-    const requiredTextFields = ["name", "phone", "location", "message"];
-    const emptyField = requiredTextFields.find((name) => !value(name));
-
-    if (emptyField) {
-      setFormStatus("Please complete the required fields before continuing.");
-      setFormStatusType("error");
-      (form.elements.namedItem(emptyField) as HTMLElement | null)?.focus();
-      return;
-    }
-
-    if (value("phone").replace(/\D/g, "").length < 7) {
-      setFormStatus("Please enter a valid phone or WhatsApp number.");
-      setFormStatusType("error");
-      (form.elements.namedItem("phone") as HTMLInputElement | null)?.focus();
-      return;
-    }
-
-    const message = [
-      "Hello Evolura, I would like to request a service.",
-      "",
-      `Name: ${value("name")}`,
-      `Phone / WhatsApp: ${value("phone")}`,
-      `Service: ${value("service")}`,
-      `Location: ${value("location")}`,
-      `Request details: ${value("message")}`,
-    ].join("\n");
-
-    setFormStatus("Your quote request is ready. WhatsApp will open so you can send it.");
-    setFormStatusType("success");
-    window.open(
-      `https://wa.me/971503112307?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener,noreferrer",
-    );
-  }
-
   return (
     <div className="min-h-screen overflow-x-clip bg-white text-[#0b2434]">
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
 
-      <header className={`site-header ${isHeaderCompact ? "site-header--compact" : ""}`}>
-        <div className="site-shell site-header__inner">
-          <Brand />
-          <nav className="desktop-navigation" aria-label="Main navigation">
-            <a className="nav-link" href="#services">
-              Services
-            </a>
-            <a className="nav-link" href="#why-evolura">
-              Why Evolura
-            </a>
-            <a className="nav-link" href="#how-it-works">
-              How it works
-            </a>
-            <a className="nav-link" href="#recent-work">
-              Recent work
-            </a>
-            <a className="nav-link" href="#contact">
-              Contact
-            </a>
-          </nav>
-          <div className="header-actions">
-            <a className="header-cta" href="#request-service">
-              Get a quote
-              <span aria-hidden="true">↘</span>
-            </a>
-            <button
-              className={`mobile-menu-toggle ${menuOpen ? "is-open" : ""}`}
-              type="button"
-              aria-expanded={menuOpen}
-              aria-controls="mobile-navigation"
-              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-              onClick={() => setMenuOpen((open) => !open)}
-            >
-              <span />
-              <span />
-            </button>
-          </div>
-        </div>
-        <nav
-          id="mobile-navigation"
-          className={`mobile-navigation ${menuOpen ? "is-open" : ""}`}
-          aria-label="Mobile navigation"
-        >
-          <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
-          <a href="#why-evolura" onClick={() => setMenuOpen(false)}>Why Evolura</a>
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
-          <a href="#recent-work" onClick={() => setMenuOpen(false)}>Recent work</a>
-          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
-        </nav>
-      </header>
+      <SiteHeader />
 
-      <main id="main-content">
-        <section id="top" className="hero-section" aria-labelledby="hero-heading">
+      <main id="main-content" tabIndex={-1}>
+        <section id="top" className="hero-section" aria-labelledby="hero-heading" tabIndex={-1}>
           {/* Pre-sized WebP sources keep the brochure hero responsive without a runtime image transformer. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="hero-section__image"
             src="/evolura-hero.webp"
             srcSet="/evolura-hero-960.webp 960w, /evolura-hero-1440.webp 1440w, /evolura-hero.webp 1823w"
-            sizes="100vw"
+            sizes="(max-width: 767px) 160vw, 100vw"
             alt="Facility technician operating a floor scrubber in a bright modern lobby"
             width="1823"
             height="863"
@@ -360,14 +176,14 @@ export function EvoluraLanding() {
               </h1>
               <p className="hero-description hero-enter hero-enter--3">
                 Professional cleaning and technical maintenance for offices, commercial
-                properties and facilities. Fast quotations, trained teams and flexible
+                properties and facilities. Clear quotations, trained teams and flexible
                 service contracts.
               </p>
               <div className="hero-actions hero-enter hero-enter--4">
-                <a className="primary-button" href={WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer">
-                  Get a Free WhatsApp Quote <span aria-hidden="true">↗</span>
+                <a className="primary-button" href={DEFAULT_WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer" aria-label="Request a quote on WhatsApp (opens in a new tab)">
+                  Request a WhatsApp Quote <span aria-hidden="true">↗</span>
                 </a>
-                <a className="secondary-button" href="tel:+971503112307">
+                <a className="secondary-button" href={BUSINESS.phoneHref}>
                   Call Us Now <span aria-hidden="true">↗</span>
                 </a>
               </div>
@@ -381,13 +197,14 @@ export function EvoluraLanding() {
           </div>
         </section>
 
-        <section className="trust-strip" aria-label="Why property teams contact Evolura">
+        <section className="trust-strip" aria-labelledby="trust-strip-heading">
+          <h2 id="trust-strip-heading" className="sr-only">Evolura service information</h2>
           <div className="site-shell trust-strip__grid">
             {trustIndicators.map((item, index) => (
               <article className="trust-indicator reveal" key={item.label}>
                 <span aria-hidden="true">0{index + 1}</span>
                 <div>
-                  <h2>{item.label}</h2>
+                  <h3>{item.label}</h3>
                   <p>{item.copy}</p>
                 </div>
               </article>
@@ -395,16 +212,21 @@ export function EvoluraLanding() {
           </div>
         </section>
 
-        <section id="services" className="services-section section-anchor bg-[#f4f8fa] py-16 md:py-20">
+        <section
+          id="services"
+          className="services-section section-anchor bg-[#f4f8fa] py-16 md:py-20"
+          aria-labelledby="services-heading"
+          tabIndex={-1}
+        >
           <div className="services-section__halo" aria-hidden="true" />
           <div className="site-shell">
             <div className="reveal grid items-start gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div>
                 <p className="section-kicker">Our services</p>
-                <h2 className="section-title mt-5 max-w-[700px]">
+                <h2 id="services-heading" className="section-title mt-5 max-w-[700px]">
                   Cleaning and technical maintenance.
                   <br />
-                  One trusted UAE team.
+                  Coordinated through one request.
                 </h2>
               </div>
               <p className="max-w-[600px] text-base leading-8 text-[#536b79] lg:justify-self-end lg:pt-12 md:text-lg">
@@ -452,12 +274,9 @@ export function EvoluraLanding() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="#request-service"
-                  onClick={() => setSelectedService("Cleaning services")}
-                >
+                <QuoteRequestLink service="commercial-office-cleaning-dubai">
                   Request cleaning <span aria-hidden="true">→</span>
-                </a>
+                </QuoteRequestLink>
               </article>
 
               <article className="service-card service-card--maintenance scroll-lift-card">
@@ -485,8 +304,8 @@ export function EvoluraLanding() {
                   </span>
                   <h3>Building maintenance services</h3>
                   <p>
-                    Responsive building, MEP and HVAC maintenance that protects comfort,
-                    safety and property value.
+                    Responsive building, MEP and HVAC maintenance that supports comfort,
+                    safety and day-to-day property operation.
                   </p>
                 </div>
                 <ul>
@@ -497,12 +316,9 @@ export function EvoluraLanding() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="#request-service"
-                  onClick={() => setSelectedService("Maintenance services")}
-                >
+                <QuoteRequestLink service="building-maintenance-dubai">
                   Request maintenance <span aria-hidden="true">→</span>
-                </a>
+                </QuoteRequestLink>
               </article>
             </div>
 
@@ -528,50 +344,20 @@ export function EvoluraLanding() {
                 </div>
               </div>
             </div>
-            <div className="seo-services-grid" aria-labelledby="explore-services-heading">
-              {serviceHighlights.map((service, index) => (
-                <a
-                  className={`seo-service-card seo-service-card--${index + 1} scroll-lift-card`}
-                  href={`/services/${service.slug}`}
-                  key={service.slug}
-                >
-                  <figure className="seo-service-card__media">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={service.image}
-                      srcSet={`${service.imageSmall} 720w, ${service.image} 1440w`}
-                      sizes="(max-width: 767px) calc(100vw - 36px), (max-width: 1279px) 50vw, 33vw"
-                      alt={service.imageAlt}
-                      width="1440"
-                      height="900"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </figure>
-                  <div className="seo-service-card__body">
-                    <div className="seo-service-card__meta">
-                      <span className="seo-service-card__icon" aria-hidden="true">
-                        {service.icon}
-                      </span>
-                      <span className="seo-service-card__eyebrow">Service {service.number}</span>
-                    </div>
-                    <h3>{service.title}</h3>
-                    <p>{service.copy}</p>
-                    <span className="seo-service-card__cta">
-                      View Service <i aria-hidden="true">↗</i>
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
+            <ServiceDirectory headingId="explore-services-heading" headingLevel={4} />
           </div>
         </section>
 
-        <section id="why-evolura" className="section-anchor bg-white py-24 md:py-32">
+        <section
+          id="why-evolura"
+          className="section-anchor bg-white py-24 md:py-32"
+          aria-labelledby="why-evolura-heading"
+          tabIndex={-1}
+        >
           <div className="site-shell">
             <div className="reveal max-w-[860px]">
               <p className="section-kicker">Why choose Evolura?</p>
-              <h2 className="section-title mt-5">
+              <h2 id="why-evolura-heading" className="section-title mt-5">
                 Care you can see.
                 <br />
                 Standards you can trust.
@@ -590,6 +376,9 @@ export function EvoluraLanding() {
                 </article>
               ))}
             </div>
+            <Link className="text-link mt-9" href="/about">
+              About Evolura and how we work <span aria-hidden="true">→</span>
+            </Link>
           </div>
         </section>
 
@@ -597,6 +386,7 @@ export function EvoluraLanding() {
           id="how-it-works"
           className="process-section section-anchor py-24 md:py-28"
           aria-labelledby="process-heading"
+          tabIndex={-1}
         >
           <div className="site-shell">
             <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -626,35 +416,34 @@ export function EvoluraLanding() {
         </section>
 
         <section
-          id="recent-work"
+          id="service-gallery"
           className="recent-work section-anchor py-24 md:py-32"
-          aria-labelledby="recent-work-heading"
+          aria-labelledby="service-gallery-heading"
+          tabIndex={-1}
         >
           <div className="site-shell">
             <div className="recent-work__heading reveal">
               <div>
-                <p className="section-kicker section-kicker--light">Our Recent Work</p>
-                <h2 id="recent-work-heading">
-                  A dedicated place for verified project results.
+                <p className="section-kicker section-kicker--light">Service preview gallery</p>
+                <h2 id="service-gallery-heading">
+                  Explore Evolura&apos;s cleaning and maintenance services.
                 </h2>
               </div>
               <div>
                 <p>
-                  This gallery is ready for Evolura&apos;s approved before-and-after and
-                  completed-project photography.
+                  These images illustrate Evolura&apos;s service categories and the types of
+                  work customers can request.
                 </p>
-                <strong>Current images are illustrative service previews—not client projects.</strong>
+                <strong>They are service previews—not client project photographs.</strong>
               </div>
             </div>
             <div className="recent-work__grid">
               {recentWork.map((item) => (
                 <a
                   className="recent-work__card reveal"
-                  href={item.image}
-                  target="_blank"
-                  rel="noreferrer"
+                  href={`/services/${item.slug}`}
                   key={item.title}
-                  aria-label={`Open ${item.title} illustrative preview`}
+                  aria-label={`View ${item.title} service details`}
                 >
                   <figure>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -668,11 +457,11 @@ export function EvoluraLanding() {
                       loading="lazy"
                       decoding="async"
                     />
-                    <span>Illustrative preview</span>
+                    <span>Service preview</span>
                     <figcaption>
                       <div>
                         <h3>{item.title}</h3>
-                        <p>Replace with a verified Evolura project photo.</p>
+                        <p>View service scope and request details.</p>
                       </div>
                       <i aria-hidden="true">↗</i>
                     </figcaption>
@@ -729,17 +518,22 @@ export function EvoluraLanding() {
           </div>
         </section>
 
-        <section id="request-service" className="section-anchor request-section py-24 md:py-32">
+        <section
+          id="request-service"
+          className="section-anchor request-section py-24 md:py-32"
+          aria-labelledby="request-service-heading"
+          tabIndex={-1}
+        >
           <div className="site-shell grid gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
             <div className="reveal">
-              <p className="section-kicker">Free quotation</p>
-              <h2 className="section-title mt-5">Tell us what your space needs.</h2>
+              <p className="section-kicker">Request a quotation</p>
+              <h2 id="request-service-heading" className="section-title mt-5">Tell us what your space needs.</h2>
               <p className="mt-7 max-w-[540px] text-base leading-8 text-[#5e707b] md:text-lg">
                 Share five quick details. Our team can then confirm the right service,
                 timing and next step for your property.
               </p>
 
-              <div id="contact" className="mt-12 divide-y divide-[#d5e0e5] border-y border-[#d5e0e5]">
+              <div id="contact" className="mt-12 divide-y divide-[#d5e0e5] border-y border-[#d5e0e5]" tabIndex={-1}>
                 {contactItems.map((item) => (
                   <a
                     className="contact-row"
@@ -747,6 +541,11 @@ export function EvoluraLanding() {
                     key={item.label}
                     target={item.label === "Visit" ? "_blank" : undefined}
                     rel={item.label === "Visit" ? "noreferrer" : undefined}
+                    aria-label={
+                      item.label === "Visit"
+                        ? "View Evolura's office location in Google Maps (opens in a new tab)"
+                        : undefined
+                    }
                   >
                     <span>{item.label}</span>
                     <strong>{item.value}</strong>
@@ -756,134 +555,14 @@ export function EvoluraLanding() {
               </div>
             </div>
 
-            <form
-              className="request-form reveal reveal--delay"
-              aria-labelledby="quote-form-heading"
-              onSubmit={handleSubmit}
-              noValidate
-            >
-              <div className="form-heading">
-                <span id="quote-form-heading">Free quote request</span>
-                <span>Fields marked * are required</span>
-              </div>
-
-              <div className="form-grid">
-                <label className="form-field">
-                  <span>Full name *</span>
-                  <input name="name" type="text" autoComplete="name" placeholder="Your name" required />
-                </label>
-                <label className="form-field">
-                  <span>Phone / WhatsApp *</span>
-                  <input
-                    name="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    placeholder="+971 50 123 4567"
-                    pattern="[+() 0-9-]{7,20}"
-                    required
-                  />
-                </label>
-                <label className="form-field">
-                  <span>Service needed *</span>
-                  <select
-                    name="service"
-                    value={selectedService}
-                    onChange={(event) => setSelectedService(event.currentTarget.value)}
-                    required
-                  >
-                    <option value="" disabled>
-                      Select a service
-                    </option>
-                    <option>Cleaning services</option>
-                    <option>Maintenance services</option>
-                    <option>MEP services</option>
-                    <option>HVAC maintenance</option>
-                    <option>Emergency repair</option>
-                    <option>Not sure — advise me</option>
-                  </select>
-                </label>
-                <label className="form-field">
-                  <span>Property location *</span>
-                  <input
-                    name="location"
-                    type="text"
-                    autoComplete="street-address"
-                    placeholder="Area, building or full address"
-                    required
-                  />
-                </label>
-                <label className="form-field form-field--full">
-                  <span>How can we help? *</span>
-                  <textarea
-                    name="message"
-                    rows={4}
-                    placeholder="Tell us about the space, issue, size or timing..."
-                    required
-                  />
-                </label>
-              </div>
-
-              <div className="form-submit-row">
-                <div className="form-submit-actions">
-                  <button type="submit">
-                    Request a Free Quote <span aria-hidden="true">↗</span>
-                  </button>
-                  <a href={WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer">
-                    WhatsApp us <span aria-hidden="true">↗</span>
-                  </a>
-                </div>
-                <p
-                  className={formStatusType ? `form-status form-status--${formStatusType}` : "form-status"}
-                  aria-live="polite"
-                >
-                  {formStatus}
-                </p>
-              </div>
-            </form>
+            <QuoteRequestForm />
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="site-shell">
-          <div className="grid gap-10 py-14 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
-              <Brand inverse />
-              <p className="mt-7 max-w-[670px] text-3xl font-semibold uppercase leading-tight tracking-[-0.04em] text-white md:text-5xl">
-                Cleaner environments. Stronger buildings. <span>Better tomorrow.</span>
-              </p>
-              <address className="service-footer-address">
-                Ground Floor, Levana Residence, Al Barsha 1, Dubai, United Arab Emirates
-                <br />
-                <a href="tel:+971503112307">+971 50 311 2307</a>
-                <span aria-hidden="true"> · </span>
-                <a href="mailto:info@evolurats.com">info@evolurats.com</a>
-              </address>
-            </div>
-            <a className="footer-top" href="#top">
-              Back to top <span aria-hidden="true">↑</span>
-            </a>
-          </div>
-          <div className="flex flex-col gap-4 border-t border-white/12 py-6 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
-            <p>© {new Date().getFullYear()} Evolura Technical Services.</p>
-            <nav className="footer-service-nav" aria-label="Service pages">
-              {serviceHighlights.map((service) => (
-                <a href={`/services/${service.slug}`} key={service.slug}>
-                  {service.title}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter backToTopHref="#top" brandHref="#top" showTagline />
 
-      <div className="mobile-action-bar" aria-label="Quick contact actions">
-        <a href={WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer">
-          WhatsApp <span aria-hidden="true">↗</span>
-        </a>
-        <a href="tel:+971503112307">Call <span aria-hidden="true">↗</span></a>
-      </div>
+      <MobileContactBar />
     </div>
   );
 }

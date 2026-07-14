@@ -1,65 +1,31 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "./JsonLd";
+import { createPageMetadata } from "./metadata";
+import { MobileContactBar } from "./MobileContactBar";
+import { SiteFooter } from "./SiteFooter";
+import { SiteHeader } from "./SiteHeader";
 import {
   SITE_URL,
   servicePages,
   type ServicePageContent,
 } from "./seo-content";
+import { BUSINESS, createWhatsAppUrl } from "./site-config";
 
-export function createServiceMetadata(page: ServicePageContent): Metadata {
-  const url = `${SITE_URL}/services/${page.slug}`;
-
-  return {
-    metadataBase: new URL(SITE_URL),
-    title: { absolute: page.metaTitle },
+export function createServiceMetadata(page: ServicePageContent) {
+  return createPageMetadata({
+    title: page.metaTitle,
     description: page.metaDescription,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      locale: "en_AE",
-      url,
-      siteName: "Evolura Technical Services",
-      title: page.metaTitle,
-      description: page.metaDescription,
-    },
-    twitter: {
-      card: "summary",
-      title: page.metaTitle,
-      description: page.metaDescription,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-        "max-video-preview": -1,
-      },
-    },
-  };
-}
-
-function ServiceBrand() {
-  return (
-    <Link className="brand" href="/" aria-label="Evolura Technical Services home">
-      <span className="brand__mark" aria-hidden="true">
-        E
-      </span>
-      <span className="brand__copy">
-        <strong>EVOLURA</strong>
-        <small>TECHNICAL SERVICES</small>
-      </span>
-    </Link>
-  );
+    path: `/services/${page.slug}`,
+  });
 }
 
 export function ServiceLanding({ page }: { page: ServicePageContent }) {
   const url = `${SITE_URL}/services/${page.slug}`;
-  const related = page.related
-    .map((slug) => servicePages[slug])
-    .filter((item): item is ServicePageContent => Boolean(item));
+  const related = page.related.map((slug) => servicePages[slug]);
+  const quoteHref = `/contact?service=${encodeURIComponent(page.slug)}#quote-form`;
+  const whatsappHref = createWhatsAppUrl(
+    `Hello Evolura, I would like a quote for ${page.shortTitle}.`,
+  );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -71,6 +37,7 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
         serviceType: page.shortTitle,
         description: page.metaDescription,
         url,
+        image: `${SITE_URL}${page.image.src}`,
         provider: { "@id": `${SITE_URL}/#business` },
         areaServed: {
           "@type": "Country",
@@ -79,6 +46,7 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
       },
       {
         "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
         itemListElement: [
           {
             "@type": "ListItem",
@@ -90,7 +58,7 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
             "@type": "ListItem",
             position: 2,
             name: "Services",
-            item: `${SITE_URL}/#services`,
+            item: `${SITE_URL}/services`,
           },
           {
             "@type": "ListItem",
@@ -101,7 +69,26 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
         ],
       },
       {
+        "@type": "WebPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: page.metaTitle,
+        description: page.metaDescription,
+        inLanguage: "en-AE",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${url}#service` },
+        breadcrumb: { "@id": `${url}#breadcrumb` },
+        primaryImageOfPage: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}${page.image.src}`,
+          width: 1440,
+          height: 900,
+        },
+      },
+      {
         "@type": "FAQPage",
+        "@id": `${url}#faq`,
+        isPartOf: { "@id": `${url}#webpage` },
         mainEntity: page.faqs.map((faq) => ({
           "@type": "Question",
           name: faq.question,
@@ -116,46 +103,22 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
 
   return (
     <div className="service-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLd data={structuredData} />
 
       <a className="skip-link" href="#service-main">
         Skip to main content
       </a>
 
-      <header className="site-header">
-        <div className="site-shell flex h-[74px] items-center justify-between gap-6">
-          <ServiceBrand />
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
-            <Link className="nav-link" href="/#services">
-              Services
-            </Link>
-            <Link className="nav-link" href="/#why-evolura">
-              Why Evolura
-            </Link>
-            <Link className="nav-link" href="/#contact">
-              Contact
-            </Link>
-          </nav>
-          <Link className="header-cta" href="/#request-service">
-            Request a service
-            <span aria-hidden="true">↘</span>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader home={false} currentPath="/services" quoteHref={quoteHref} />
 
-      <main id="service-main">
-        <section className="service-page-hero">
+      <main id="service-main" tabIndex={-1}>
+        <section className="service-page-hero" id="service-top" tabIndex={-1}>
           <div className="service-page-hero__orbit" aria-hidden="true" />
           <div className="site-shell relative z-10 py-28 md:py-36">
             <nav className="service-breadcrumb" aria-label="Breadcrumb">
               <Link href="/">Home</Link>
               <span aria-hidden="true">/</span>
-              <Link href="/#services">Services</Link>
+              <Link href="/services">Services</Link>
               <span aria-hidden="true">/</span>
               <span aria-current="page">{page.shortTitle}</span>
             </nav>
@@ -163,20 +126,36 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
             <h1>{page.title}</h1>
             <p className="service-page-hero__intro">{page.introduction}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link className="primary-button" href="/#request-service">
-                Request this service <span aria-hidden="true">↘</span>
+              <Link className="primary-button" href={quoteHref}>
+                Request a quote for {page.shortTitle} <span aria-hidden="true">↘</span>
               </Link>
-              <a className="secondary-button" href="tel:+971503112307">
-                Call +971 50 311 2307 <span aria-hidden="true">↗</span>
+              <a className="secondary-button" href={BUSINESS.phoneHref}>
+                Call {BUSINESS.phoneDisplay} <span aria-hidden="true">↗</span>
               </a>
             </div>
-            <div className="service-page-hero__proof" aria-label="Service highlights">
-              <span>Dubai based</span>
-              <i />
-              <span>UAE coverage</span>
-              <i />
-              <span>24/7 support</span>
-            </div>
+            <ul className="service-page-hero__proof" aria-label="Service highlights">
+              <li>Dubai based</li>
+              <li>UAE requests reviewed</li>
+              <li>Urgent request support</li>
+            </ul>
+            <dl className="service-glance" aria-label={`${page.shortTitle} at a glance`}>
+              <div>
+                <dt>Service</dt>
+                <dd>{page.shortTitle}</dd>
+              </div>
+              <div>
+                <dt>Coverage</dt>
+                <dd>Dubai; UAE requests confirmed by location and scope</dd>
+              </div>
+              <div>
+                <dt>Suitable for</dt>
+                <dd>{page.propertyTypes.slice(0, 2).join("; ")}</dd>
+              </div>
+              <div>
+                <dt>Service options</dt>
+                <dd>{page.serviceFormat}</dd>
+              </div>
+            </dl>
           </div>
         </section>
 
@@ -184,19 +163,35 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
           <div className="site-shell grid gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-24">
             <div>
               <p className="section-kicker">Service overview</p>
-              <h2 className="section-title mt-5">A clear scope for a better-maintained property.</h2>
+              <h2 className="section-title mt-5">{page.overviewHeading}</h2>
               <p className="service-lead">{page.summary}</p>
             </div>
-            <div className="service-standards">
-              <p>What you can expect</p>
-              <ol>
-                {page.standards.map((standard, index) => (
-                  <li key={standard}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    {standard}
-                  </li>
-                ))}
-              </ol>
+            <div className="service-overview__aside">
+              <figure className="service-page-visual">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={page.image.src}
+                  srcSet={`${page.image.srcSmall} 720w, ${page.image.src} 1440w`}
+                  sizes="(max-width: 1023px) calc(100vw - 36px), 42vw"
+                  alt={page.image.alt}
+                  width="1440"
+                  height="900"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>Illustrative {page.shortTitle.toLowerCase()} service preview</figcaption>
+              </figure>
+              <div className="service-standards">
+                <p>What you can expect</p>
+                <ol>
+                  {page.standards.map((standard, index) => (
+                    <li key={standard}>
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      {standard}
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
         </section>
@@ -205,7 +200,7 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
           <div className="site-shell">
             <p className="section-kicker">What is included</p>
             <h2 id="included-heading" className="section-title mt-5 max-w-[920px]">
-              Practical services shaped around the facility.
+              {page.inclusionsHeading}
             </h2>
             <div className="service-inclusions__grid">
               {page.inclusions.map((item, index) => (
@@ -295,7 +290,7 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
                   Keep exploring Evolura.
                 </h2>
               </div>
-              <Link className="text-link" href="/#services">
+              <Link className="text-link" href="/services">
                 View all services <span aria-hidden="true">→</span>
               </Link>
             </div>
@@ -318,43 +313,16 @@ export function ServiceLanding({ page }: { page: ServicePageContent }) {
               <p>Ready to discuss the property?</p>
               <h2>Request cleaning or maintenance support across the UAE.</h2>
             </div>
-            <Link href="/#request-service">
-              Start your request <span aria-hidden="true">↗</span>
+            <Link href={quoteHref}>
+              Request a quote for {page.shortTitle} <span aria-hidden="true">↗</span>
             </Link>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="site-shell grid gap-10 py-12 md:grid-cols-[1fr_auto] md:items-end">
-          <div>
-            <Link className="brand brand--inverse" href="/" aria-label="Evolura Technical Services home">
-              <span className="brand__mark" aria-hidden="true">E</span>
-              <span className="brand__copy">
-                <strong>EVOLURA</strong>
-                <small>TECHNICAL SERVICES</small>
-              </span>
-            </Link>
-            <address className="service-footer-address">
-              Ground Floor, Levana Residence, Al Barsha 1, Dubai, United Arab Emirates
-              <br />
-              <a href="tel:+971503112307">+971 50 311 2307</a>
-              <span aria-hidden="true"> · </span>
-              <a href="mailto:info@evolurats.com">info@evolurats.com</a>
-            </address>
-          </div>
-          <a className="footer-top" href="#service-main">
-            Back to top <span aria-hidden="true">↑</span>
-          </a>
-        </div>
-      </footer>
+      <SiteFooter backToTopHref="#service-top" />
 
-      <div className="mobile-action-bar" aria-label="Quick contact actions">
-        <a href="tel:+971503112307">Call</a>
-        <Link href="/#request-service">
-          Request service <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
+      <MobileContactBar whatsappHref={whatsappHref} />
     </div>
   );
 }

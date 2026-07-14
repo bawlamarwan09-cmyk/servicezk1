@@ -1,12 +1,8 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { SITE_URL } from "./seo-content";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { JsonLd } from "./JsonLd";
+import { SITE_URL, servicePageList } from "./seo-content";
+import { BUSINESS } from "./site-config";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -20,6 +16,16 @@ export const metadata: Metadata = {
   authors: [{ name: "Evolura Technical Services" }],
   creator: "Evolura Technical Services",
   publisher: "Evolura Technical Services",
+  category: "Cleaning and technical maintenance services",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/evolura-mark-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
     locale: "en_AE",
@@ -30,10 +36,11 @@ export const metadata: Metadata = {
       "Commercial cleaning, building maintenance, MEP, HVAC and facility management services in Dubai and across the UAE.",
     images: [
       {
-        url: "/og.png",
+        url: "/og.jpg",
         width: 1200,
         height: 630,
         alt: "Evolura commercial cleaning and building maintenance services in Dubai and the UAE",
+        type: "image/jpeg",
       },
     ],
   },
@@ -42,7 +49,12 @@ export const metadata: Metadata = {
     title: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
     description:
       "Commercial cleaning, building maintenance, MEP, HVAC and facility management services in Dubai and across the UAE.",
-    images: ["/og.png"],
+    images: [
+      {
+        url: "/og.jpg",
+        alt: "Evolura commercial cleaning and building maintenance services in Dubai and the UAE",
+      },
+    ],
   },
   robots: {
     index: true,
@@ -62,53 +74,77 @@ export const metadata: Metadata = {
   },
 };
 
-const localBusinessJsonLd = {
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#031a2b",
+  width: "device-width",
+  initialScale: 1,
+};
+
+const globalStructuredData = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": `${SITE_URL}/#business`,
-  name: "Evolura Technical Services",
-  description:
-    "Professional commercial cleaning, facility management and building maintenance services in Dubai and across the United Arab Emirates.",
-  url: SITE_URL,
-  image: `${SITE_URL}/evolura-hero.webp`,
-  telephone: "+971503112307",
-  email: "info@evolurats.com",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Ground Floor, Levana Residence, Al Barsha 1",
-    addressLocality: "Dubai",
-    addressRegion: "Dubai",
-    addressCountry: "AE",
-  },
-  areaServed: {
-    "@type": "Country",
-    name: "United Arab Emirates",
-  },
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: "+971503112307",
-    contactType: "customer service",
-    areaServed: "AE",
-    availableLanguage: "English",
-  },
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Cleaning and technical services",
-    itemListElement: [
-      "Commercial cleaning services",
-      "Deep and post-construction cleaning",
-      "Building maintenance services",
-      "MEP and HVAC maintenance",
-      "Facility management services",
-    ].map((name) => ({
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name,
-        areaServed: "United Arab Emirates",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": `${SITE_URL}/#business`,
+      name: BUSINESS.name,
+      description:
+        "Professional commercial cleaning, facility management and building maintenance services in Dubai and across the United Arab Emirates.",
+      url: SITE_URL,
+      image: `${SITE_URL}/evolura-hero.webp`,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/evolura-mark.png`,
+        width: 512,
+        height: 512,
       },
-    })),
-  },
+      telephone: BUSINESS.phoneHref.replace("tel:", ""),
+      email: BUSINESS.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Ground Floor, Levana Residence, Al Barsha 1",
+        addressLocality: "Dubai",
+        addressRegion: "Dubai",
+        addressCountry: "AE",
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "United Arab Emirates",
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: BUSINESS.phoneHref.replace("tel:", ""),
+        contactType: "customer service",
+        areaServed: "AE",
+        availableLanguage: ["English"],
+      },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Cleaning and technical services",
+        itemListElement: servicePageList.map((service) => ({
+          "@type": "Offer",
+          url: `${SITE_URL}/services/${service.slug}`,
+          itemOffered: {
+            "@type": "Service",
+            "@id": `${SITE_URL}/services/${service.slug}#service`,
+            name: service.directoryTitle,
+            description: service.metaDescription,
+            url: `${SITE_URL}/services/${service.slug}`,
+            image: `${SITE_URL}${service.image.src}`,
+            areaServed: "United Arab Emirates",
+          },
+        })),
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: BUSINESS.name,
+      inLanguage: "en-AE",
+      publisher: { "@id": `${SITE_URL}/#business` },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -118,13 +154,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AE">
-      <body className={`${geistSans.variable} antialiased`}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
+      <body className="antialiased">
+        <JsonLd data={globalStructuredData} />
         {children}
       </body>
     </html>
