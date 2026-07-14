@@ -12,6 +12,10 @@ export const BUSINESS = {
     "https://maps.google.com/?q=Levana+Residence+Al+Barsha+1+Dubai",
 } as const;
 
+export const DEFAULT_WHATSAPP_QUOTE_URL =
+  `https://wa.me/${BUSINESS.whatsappNumber}`;
+
+
 export const SERVICE_OPTIONS = [
   {
     value: "commercial-office-cleaning-dubai",

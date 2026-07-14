@@ -3,6 +3,7 @@
 import { FormEvent, MouseEvent, ReactNode, useEffect, useState } from "react";
 import {
   BUSINESS,
+  DEFAULT_WHATSAPP_QUOTE_URL,
   SERVICE_OPTIONS,
   getServiceLabel,
   isServiceOption,
@@ -345,11 +346,20 @@ export function QuoteRequestForm() {
       </p>
 
       <div className="form-submit-row">
-        <div className="form-submit-actions">
-          <button type="submit" disabled={!isInteractive || isSubmitting}>
-            {isSubmitting ? "Sending..." : "Submit request"}
-          </button>
-        </div>
+       <div className="form-submit-actions">
+  <button type="submit" disabled={!isInteractive || isSubmitting}>
+    {isSubmitting ? "Sending..." : "Submit request"}
+  </button>
+
+  <a
+    href={DEFAULT_WHATSAPP_QUOTE_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="whatsapp-only-button"
+  >
+    WhatsApp us
+  </a>
+</div>
         <p
           className={
             formStatusType
