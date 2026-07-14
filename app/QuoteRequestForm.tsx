@@ -9,11 +9,12 @@ import {
   isServiceOption,
 } from "./site-config";
 
-type FieldName = "name" | "phone" | "service" | "location" | "message";
+type FieldName = "name" | "email" | "phone" | "service" | "location" | "message";
 type FieldErrors = Partial<Record<FieldName, string>>;
 
 const fieldIds: Record<FieldName, string> = {
   name: "quote-name",
+  email: "quote-email",
   phone: "quote-phone",
   service: "quote-service",
   location: "quote-location",
@@ -109,7 +110,14 @@ export function QuoteRequestForm() {
     const data = new FormData(form);
     const value = (name: FieldName) => String(data.get(name) ?? "").trim();
     const errors: FieldErrors = {};
+    if (!value("name")) errors.name = "Enter your full name.";
+    const email = value("email").toLowerCase();
 
+if (!email) {
+  errors.email = "Enter your email address.";
+} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  errors.email = "Enter a valid email address.";
+}
     if (!value("name")) errors.name = "Enter your full name.";
     const phone = value("phone");
     if (!phone) {
@@ -147,17 +155,18 @@ export function QuoteRequestForm() {
     setFormStatus("Sending your request...");
     setFormStatusType("");
 
-    const payload = {
-      name: value("name"),
-      phone: value("phone"),
-      service: value("service"),
-      serviceLabel: getServiceLabel(value("service")),
-      location: value("location"),
-      message: value("message"),
-      source: "website_quote_form",
-      pageUrl: window.location.href,
-      submittedAt: new Date().toISOString(),
-    };
+const payload = {
+  name: value("name"),
+  email: value("email").toLowerCase(),
+  phone: value("phone"),
+  service: value("service"),
+  serviceLabel: getServiceLabel(value("service")),
+  location: value("location"),
+  message: value("message"),
+  source: "website_quote_form",
+  pageUrl: window.location.href,
+  submittedAt: new Date().toISOString(),
+};
 
     try {
       const response = await fetch("/api/contact", {
@@ -243,6 +252,29 @@ export function QuoteRequestForm() {
             </span>
           ) : null}
         </div>
+        <div className="form-field">
+  <label htmlFor={fieldIds.email}>Email address *</label>
+
+  <input
+    id={fieldIds.email}
+    name="email"
+    type="email"
+    disabled={!isInteractive}
+    autoComplete="email"
+    placeholder="name@example.com"
+    maxLength={120}
+    aria-invalid={Boolean(fieldErrors.email)}
+    aria-describedby={describedBy("email", fieldErrors)}
+    onInput={() => clearError("email")}
+    required
+  />
+
+  {fieldErrors.email ? (
+    <span className="field-error" id={`${fieldIds.email}-error`}>
+      {fieldErrors.email}
+    </span>
+  ) : null}
+</div>
         <div className="form-field">
           <label htmlFor={fieldIds.phone}>Phone / WhatsApp *</label>
           <input
