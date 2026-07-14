@@ -3,7 +3,22 @@ import "./globals.css";
 import { JsonLd } from "./JsonLd";
 import { SITE_URL, servicePageList } from "./seo-content";
 import { BUSINESS } from "./site-config";
-
+import { Analytics } from "@vercel/analytics/next";
+<Analytics />
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
+}
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -147,17 +162,4 @@ const globalStructuredData = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en-AE">
-      <body className="antialiased">
-        <JsonLd data={globalStructuredData} />
-        {children}
-      </body>
-    </html>
-  );
-}
+
