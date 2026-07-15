@@ -26,7 +26,7 @@ const aboutJsonLd = {
       url: aboutUrl,
       name: "About Evolura Technical Services",
       description:
-        "Evolura Technical Services coordinates commercial cleaning and technical maintenance requests from Al Barsha 1, Dubai.",
+        "Evolura Technical Services coordinates commercial cleaning and technical maintenance requests , UAE.",
       inLanguage: "en-AE",
       isPartOf: { "@id": `${SITE_URL}/#website` },
       about: { "@id": `${SITE_URL}/#business` },
@@ -62,8 +62,8 @@ export default function AboutPage() {
             <p className="section-kicker section-kicker--light mt-14">About Evolura · Dubai</p>
             <h1>Cleaning and technical maintenance coordinated from Dubai</h1>
             <p className="service-page-hero__intro">
-              Evolura Technical Services is based in Al Barsha 1, Dubai and coordinates
-              commercial cleaning, deep cleaning, building maintenance, MEP, HVAC and
+              Evolura Technical Services is based in UAE, Dubai and coordinates
+              commercial cleaning, deep cleaning, building maintenance and cleaning, MEP, HVAC and
               integrated facility service requests across the UAE.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
