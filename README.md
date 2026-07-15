@@ -86,12 +86,50 @@ and height attributes to prevent layout shift.
 
 ## Quote form behavior
 
-The interactive website does not submit quote-form data to an Evolura website
-database. It validates five fields in the browser, passes them to WhatsApp to
-prepare a message, and lets the visitor review that message before deciding
-whether to send it. Before JavaScript is ready, the customer fields and submit
-button remain disabled. Keep the disclosure in `app/QuoteRequestForm.tsx`
-accurate if this data flow changes.
+The quotation form validates its fields in the browser and sends the request to
+the same-origin `/api/contact` route. That server route forwards the request to
+the private n8n contact workflow configured by `N8N_CONTACT_WEBHOOK_URL`.
+
+## Customer review behavior
+
+The homepage review form sends only to the same-origin `/api/reviews` route. The
+browser never receives either n8n URL or its authentication token. Configure:
+
+```bash
+N8N_REVIEW_SUBMIT_URL=https://automation.example.com/webhook/website-review
+N8N_REVIEW_FEED_URL=https://automation.example.com/webhook/website-reviews
+N8N_REVIEW_WEBHOOK_SECRET=replace-with-a-long-random-secret
+REVIEW_RATE_LIMIT_SECRET=replace-with-another-long-random-secret
+```
+
+The submit workflow must store every new review as pending. The feed workflow
+must return only approved, consented reviews and must omit customer email,
+internal status, reply content and other private fields. The public response
+shape is:
+
+```json
+{
+  "reviews": [
+    {
+      "name": "Customer display name",
+      "rating": 5,
+      "review": "Approved review text",
+      "service": "commercial-office-cleaning-dubai",
+      "createdAt": "2026-07-15T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+Use n8n Header Auth for both webhooks with an `Authorization` header whose
+value is `Bearer <N8N_REVIEW_WEBHOOK_SECRET>`. Do not expose full customer email
+addresses in the feed. Review and run `db/website-reviews-postgres.sql` before
+updating the workflow queries. See `.env.example` for the complete non-secret
+template.
+
+The in-process website limiter is only a first layer. Before launch, use the
+PostgreSQL limiter table from the migration in the n8n submit workflow and run
+its documented cleanup query on an hourly n8n schedule.
 
 ## Validation
 

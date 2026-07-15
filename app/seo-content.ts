@@ -17,7 +17,7 @@ export const SITE_URL = normalizeSiteUrl(
 );
 
 // Update this only when indexable content changes; sitemap dates should describe real edits.
-export const CONTENT_LAST_MODIFIED = new Date("2026-07-14T00:00:00.000Z");
+export const CONTENT_LAST_MODIFIED = new Date("2026-07-15T00:00:00.000Z");
 
 export type FaqItem = {
   question: string;

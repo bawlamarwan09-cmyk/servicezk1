@@ -40,6 +40,23 @@ async function render(pathname = "/", accept = "text/html") {
   );
 }
 
+async function requestApp(pathname, init) {
+  const worker = await workerPromise;
+
+  return worker.fetch(
+    new Request(`http://localhost${pathname}`, init),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+}
+
 function assertCanonical(html, expectedPathname) {
   const canonicalTag = html.match(/<link\b[^>]*\brel="canonical"[^>]*>/i)?.[0];
   assert.ok(canonicalTag, `a canonical link should exist for ${expectedPathname}`);
@@ -70,7 +87,7 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<html lang="en-AE">/i);
+  assert.match(html, /<html lang="en">/i);
   assert.match(
     html,
     /<title>Commercial Cleaning &amp; Building Maintenance Dubai \| Evolura<\/title>/i,
@@ -80,7 +97,8 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.match(html, /Building Maintenance/i);
   assert.match(html, /in Dubai &amp; UAE/i);
   assert.match(html, /Request a WhatsApp Quote/i);
-  assert.match(html, /Continue on WhatsApp/i);
+  assert.match(html, /Submit request/i);
+  assert.match(html, /WhatsApp us/i);
   assert.match(html, /id="request-service"/i);
 
   const quoteForm = html.match(
@@ -89,18 +107,38 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.ok(quoteForm, "the quote request form should be server-rendered");
   assert.deepEqual(
     [...quoteForm.matchAll(/\bname="([^"]+)"/gi)].map((match) => match[1]),
-    ["name", "phone", "service", "location", "message"],
-    "the quote form should contain exactly the five approved fields",
+    ["name", "email", "phone", "service", "location", "message"],
+    "the quote form should contain exactly the six approved fields",
   );
-  assert.doesNotMatch(quoteForm, /\bname="(?:email|property|date|consent)"/i);
+  assert.doesNotMatch(quoteForm, /\bname="(?:property|date|consent)"/i);
   assert.doesNotMatch(quoteForm, /type="checkbox"/i);
-  assert.match(quoteForm, /action="\/contact"/i);
+  assert.match(quoteForm, /action="\/api\/contact"/i);
   assert.match(quoteForm, /method="post"/i);
   assert.equal(
     [...quoteForm.matchAll(/<(?:input|select|textarea)\b[^>]*\bdisabled=""/gi)].length,
-    5,
+    6,
     "all customer fields should remain disabled until the interactive form hydrates",
   );
+
+  const reviewForm = html.match(
+    /<form[^>]*class="[^"]*\breview-form\b[^"]*"[^>]*>[\s\S]*?<\/form>/i,
+  )?.[0];
+  assert.ok(reviewForm, "the customer review form should be server-rendered");
+  assert.match(reviewForm, /action="\/api\/reviews"/i);
+  assert.match(reviewForm, /<fieldset[^>]+class="[^"]*\breview-rating\b/i);
+  assert.equal(
+    [...reviewForm.matchAll(/\bname="rating"/gi)].length,
+    5,
+    "the accessible rating group should contain five native radio options",
+  );
+  for (const field of ["name", "email", "review", "service", "consentToPublish", "website"]) {
+    assert.match(reviewForm, new RegExp(`name="${field}"`, "i"), field);
+  }
+  assert.match(reviewForm, /type="checkbox"/i);
+  assert.match(reviewForm, /My email stays private/i);
+  assert.match(reviewForm, /checked before it can appear publicly/i);
+  assert.match(html, /id="customer-reviews"/i);
+  assert.match(html, /Approved customer reviews/i);
 
   assert.match(html, /info@evolurats\.com/i);
   assert.match(html, /LocalBusiness/i);
@@ -173,6 +211,74 @@ test("publishes one stable Google favicon and the Evolura organization logo", as
     [0, 0, 1, 0],
     "the conventional fallback should be a genuine ICO file",
   );
+});
+
+test("protects review submissions before they reach the private workflow", async () => {
+  const validReview = {
+    name: "Test Customer",
+    email: "customer@example.com",
+    rating: 5,
+    review: "The service team arrived on time and handled the work carefully.",
+    service: "commercial-office-cleaning-dubai",
+    consentToPublish: true,
+    website: "",
+    formStartedAt: Date.now() - 5_000,
+  };
+
+  const missingOrigin = await requestApp("/api/reviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(validReview),
+  });
+  assert.equal(missingOrigin.status, 403);
+  assert.equal(missingOrigin.headers.get("cache-control"), "no-store");
+
+  const malformedRating = await requestApp("/api/reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "http://localhost",
+    },
+    body: JSON.stringify({ ...validReview, rating: "5evil" }),
+  });
+  assert.equal(malformedRating.status, 422);
+  const malformedRatingBody = await malformedRating.json();
+  assert.match(malformedRatingBody.fieldErrors.rating, /1 to 5 stars/i);
+
+  const honeypot = await requestApp("/api/reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "http://localhost",
+    },
+    body: JSON.stringify({ ...validReview, website: "spam.example" }),
+  });
+  assert.equal(honeypot.status, 202);
+  assert.equal((await honeypot.json()).success, true);
+
+  const unconfiguredWorkflow = await requestApp("/api/reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "http://localhost",
+    },
+    body: JSON.stringify(validReview),
+  });
+  assert.equal(unconfiguredWorkflow.status, 503);
+  const unconfiguredBody = await unconfiguredWorkflow.json();
+  assert.doesNotMatch(JSON.stringify(unconfiguredBody), /customer@example\.com/i);
+
+  const unconfiguredFeed = await requestApp("/api/reviews", {
+    headers: { Accept: "application/json" },
+  });
+  assert.equal(unconfiguredFeed.status, 503);
+  assert.doesNotMatch(await unconfiguredFeed.text(), /email/i);
+
+  const cacheBustAttempt = await requestApp("/api/reviews?junk=unique", {
+    headers: { Accept: "application/json" },
+  });
+  assert.equal(cacheBustAttempt.status, 400);
+  assert.equal(cacheBustAttempt.headers.get("cache-control"), "no-store");
 });
 
 test("serves focused, canonical service pages", async () => {
@@ -264,17 +370,18 @@ test("serves factual About and privacy pages with unique metadata", async () => 
 
   assert.match(
     privacy,
-    /<title>Privacy &amp; WhatsApp Quote Form Information \| Evolura<\/title>/i,
+    /<title>Privacy &amp; Website Forms \| Evolura Technical Services<\/title>/i,
   );
   assertCanonical(privacy, "/privacy");
   assert.match(
     privacy,
-    /<h1[^>]*>Privacy and WhatsApp quote form information<\/h1>/i,
+    /<h1[^>]*>Privacy and website form information<\/h1>/i,
   );
   assert.match(privacy, /WebPage/i);
-  assert.match(privacy, /The form prepares a WhatsApp message/i);
-  assert.match(privacy, /does not submit or store your details in an Evolura website database/i);
-  assert.match(privacy, /You can review, edit or cancel that message/i);
+  assert.match(privacy, /Quotation details are sent to Evolura/i);
+  assert.match(privacy, /Your email stays private when you submit a review/i);
+  assert.match(privacy, /Submitting a review does not publish it immediately/i);
+  assert.match(privacy, /Email addresses are not published/i);
   assert.match(privacy, /WhatsApp, phone and email open outside this website/i);
 
   assert.notEqual(
@@ -330,13 +437,13 @@ test("publishes crawl directives and a complete sitemap", async () => {
 
   assert.match(robots, /User-Agent:\s*\*/i);
   assert.match(robots, /Allow:\s*\//i);
-  assert.match(robots, new RegExp(`Sitemap:\\s*${expectedSiteOrigin}/sitemap\\.xml`, "i"));
-  assert.match(robots, new RegExp(`Host:\\s*${expectedSiteOrigin}`, "i"));
+  assert.match(robots, /Sitemap:\s*https:\/\/evolurats\.com\/sitemap\.xml/i);
+  assert.match(robots, /Host:\s*https:\/\/evolurats\.com/i);
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/services</loc>`, "i"));
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/about</loc>`, "i"));
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/contact</loc>`, "i"));
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/privacy</loc>`, "i"));
-  assert.match(sitemap, /<lastmod>2026-07-14T00:00:00\.000Z<\/lastmod>/i);
+  assert.match(sitemap, /<lastmod>2026-07-15T00:00:00\.000Z<\/lastmod>/i);
   assert.match(sitemap, /commercial-office-cleaning-dubai/i);
   assert.match(sitemap, /deep-post-construction-cleaning-dubai/i);
   assert.match(sitemap, /building-maintenance-dubai/i);
@@ -349,6 +456,9 @@ test("keeps service requests accessible and production-ready", async () => {
     page,
     landing,
     quoteForm,
+    reviewForm,
+    reviewCarousel,
+    reviewApi,
     siteHeader,
     siteConfig,
     metadataHelper,
@@ -363,6 +473,9 @@ test("keeps service requests accessible and production-ready", async () => {
     readFile(new URL("app/page.tsx", root), "utf8"),
     readFile(new URL("app/EvoluraLanding.tsx", root), "utf8"),
     readFile(new URL("app/QuoteRequestForm.tsx", root), "utf8"),
+    readFile(new URL("app/ReviewForm.tsx", root), "utf8"),
+    readFile(new URL("app/ReviewCarousel.tsx", root), "utf8"),
+    readFile(new URL("app/api/reviews/route.ts", root), "utf8"),
     readFile(new URL("app/SiteHeader.tsx", root), "utf8"),
     readFile(new URL("app/site-config.ts", root), "utf8"),
     readFile(new URL("app/metadata.ts", root), "utf8"),
@@ -388,21 +501,44 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.doesNotMatch(landing, /<span>\{service\.number\}<\/span>/);
 
   assert.match(quoteForm, /^"use client";/);
-  assert.match(quoteForm, /Continue on WhatsApp/);
+  assert.match(quoteForm, /fetch\("\/api\/contact"/);
   assert.match(quoteForm, /aria-invalid=/);
   assert.match(quoteForm, /aria-describedby=/);
   assert.match(quoteForm, /aria-live=/);
   assert.match(quoteForm, /"alert"\s*:\s*"status"/);
   assert.match(quoteForm, /document\.getElementById\([^)]*\)\?\.focus\(\)/);
-  assert.match(quoteForm, /does not store these fields in an Evolura database/i);
-  assert.match(quoteForm, /details to WhatsApp to prepare a message/i);
+  assert.match(quoteForm, /sent securely to Evolura/i);
   assert.match(quoteForm, /disabled=\{!isInteractive\}/);
-  assert.match(quoteForm, /action="\/contact"/);
+  assert.match(quoteForm, /action="\/api\/contact"/);
   assert.match(quoteForm, /method="post"/);
-  assert.match(quoteForm, /window\.open\("", "_blank"\)/);
-  assert.match(quoteForm, /opened\.opener = null/);
   assert.doesNotMatch(quoteForm, /type="checkbox"/);
-  assert.doesNotMatch(quoteForm, /name="(?:email|property|date|consent)"/);
+  assert.doesNotMatch(quoteForm, /name="(?:property|date|consent)"/);
+
+  assert.match(reviewForm, /^"use client";/);
+  assert.match(reviewForm, /fetch\("\/api\/reviews"/);
+  assert.match(reviewForm, /<fieldset/);
+  assert.match(reviewForm, /type="radio"/);
+  assert.match(reviewForm, /type="checkbox"/);
+  assert.match(reviewForm, /name="website"/);
+  assert.match(reviewForm, /consentToPublish/);
+  assert.match(reviewForm, /My email stays private/i);
+  assert.match(reviewForm, /aria-live=/);
+  assert.doesNotMatch(reviewForm, /dangerouslySetInnerHTML/);
+
+  assert.match(reviewCarousel, /^"use client";/);
+  assert.match(reviewCarousel, /Pause reviews/);
+  assert.match(reviewCarousel, /aria-hidden=\{clone/);
+  assert.match(reviewCarousel, /reviews\.length >= 4/);
+  assert.doesNotMatch(reviewCarousel, /customer_email|dangerouslySetInnerHTML/);
+
+  assert.match(reviewApi, /MAX_REQUEST_BYTES\s*=\s*8_192/);
+  assert.match(reviewApi, /requestIsSameOrigin/);
+  assert.match(reviewApi, /N8N_REVIEW_WEBHOOK_SECRET/);
+  assert.match(reviewApi, /N8N_REVIEW_SUBMIT_URL/);
+  assert.match(reviewApi, /N8N_REVIEW_FEED_URL/);
+  assert.match(reviewApi, /status:\s*202/);
+  assert.match(reviewApi, /consentToPublish === true/);
+  assert.doesNotMatch(reviewApi, /dangerouslySetInnerHTML/);
 
   assert.match(siteHeader, /^"use client";/);
   assert.match(siteHeader, /event\.key !== "Escape"/);
@@ -427,6 +563,9 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(servicesPage, /MobileContactBar/);
   assert.match(styles, /prefers-reduced-motion:\s*reduce/);
   assert.match(styles, /@keyframes service-card-scroll-lift/);
+  assert.match(styles, /@keyframes review-scroll-right/);
+  assert.match(styles, /review-carousel__control/);
+  assert.match(styles, /review-carousel__group--clone/);
   assert.match(styles, /scroll-margin-top/);
   assert.match(styles, /content-visibility:\s*auto/);
   assert.match(styles, /data-mobile-menu-open/);
@@ -479,7 +618,7 @@ test("serves the web app manifest and an accessible 404", async () => {
   assert.equal(manifestResponse.status, 200);
   const manifest = JSON.parse(await manifestResponse.text());
   assert.equal(manifest.name, "Evolura Technical Services");
-  assert.equal(manifest.theme_color, "#031a2b");
+  assert.equal(manifest.theme_color, "#062338");
   assert.ok(manifest.icons.some((icon) => icon.sizes === "512x512"));
 
   assert.equal(missingResponse.status, 404);

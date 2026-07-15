@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MobileContactBar } from "./MobileContactBar";
 import { QuoteRequestForm, QuoteRequestLink } from "./QuoteRequestForm";
+import { ReviewSection } from "./ReviewSection";
 import { ServiceDirectory } from "./ServiceDirectory";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
@@ -321,8 +322,6 @@ export function EvoluraLanding() {
                 </QuoteRequestLink>
               </article>
             </div>
-
-           import Link from "next/link";
             <ServiceDirectory headingId="explore-services-heading" headingLevel={4} />
           </div>
         </section>
@@ -537,6 +536,8 @@ export function EvoluraLanding() {
             <QuoteRequestForm />
           </div>
         </section>
+
+        <ReviewSection />
       </main>
 
       <SiteFooter backToTopHref="#top" brandHref="#top" showTagline />

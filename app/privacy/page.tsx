@@ -10,9 +10,9 @@ import { BUSINESS, DEFAULT_WHATSAPP_QUOTE_URL } from "../site-config";
 const privacyUrl = `${SITE_URL}/privacy`;
 
 export const metadata = createPageMetadata({
-  title: "Privacy & WhatsApp Quote Form Information | Evolura",
+  title: "Privacy & Website Forms | Evolura Technical Services",
   description:
-    "Understand how the Evolura website prepares WhatsApp quote requests and what happens to the contact details you choose to enter.",
+    "Understand how Evolura handles quotation requests, customer review submissions, contact details, moderation and publication choices.",
   path: "/privacy",
 });
 
@@ -23,9 +23,9 @@ const privacyJsonLd = {
       "@type": "WebPage",
       "@id": `${privacyUrl}#webpage`,
       url: privacyUrl,
-      name: "Privacy and WhatsApp quote form information",
+      name: "Privacy and website form information",
       description:
-        "Information about how the Evolura website prepares WhatsApp quote requests.",
+        "Information about how Evolura handles quotation requests and customer review submissions.",
       inLanguage: "en-AE",
       isPartOf: { "@id": `${SITE_URL}/#website` },
       about: { "@id": `${SITE_URL}/#business` },
@@ -58,11 +58,11 @@ export default function PrivacyPage() {
               <span aria-hidden="true">/</span>
               <span aria-current="page">Privacy</span>
             </nav>
-            <p className="section-kicker section-kicker--light mt-14">Website information</p>
-            <h1>Privacy and WhatsApp quote form information</h1>
+            <p className="section-kicker section-kicker--light mt-14">Privacy information</p>
+            <h1>Privacy and website form information</h1>
             <p className="service-page-hero__intro">
-              A plain-language explanation of what happens when you complete the quotation
-              form or choose a contact link on this website.
+              A plain-language explanation of what happens when you request a quotation,
+              submit a customer review or choose an external contact link.
             </p>
           </div>
         </section>
@@ -71,27 +71,72 @@ export default function PrivacyPage() {
           <div className="site-shell">
             <section aria-labelledby="quote-form-data">
               <p className="section-kicker">Quote form</p>
-              <h2 id="quote-form-data">The form prepares a WhatsApp message.</h2>
+              <h2 id="quote-form-data">Quotation details are sent to Evolura&apos;s contact workflow.</h2>
               <p>
-                The quotation form does not submit or store your details in an Evolura
-                website database. When you submit the completed form, its details are passed
-                to WhatsApp in order to prepare the message. You can review, edit or cancel
-                that message, and Evolura receives it only after you choose to tap Send.
+                When you submit the quotation form, the website sends the information you
+                entered to Evolura&apos;s private contact workflow so the team can review the
+                request and respond. The form asks for your name, email, phone or WhatsApp
+                number, requested service, property location and service details.
+              </p>
+            </section>
+
+            <section aria-labelledby="review-form-data">
+              <p className="section-kicker">Customer review form</p>
+              <h2 id="review-form-data">Your email stays private when you submit a review.</h2>
+              <p>
+                The review form asks for your name, email address, a one-to-five-star rating,
+                an optional service category, your written feedback and your agreement to
+                publication. Your email is used for confirmation, moderation or a relevant
+                service follow-up. It is not displayed in the public review cards.
+              </p>
+              <p>
+                Review submissions pass through Evolura&apos;s protected website endpoint and
+                automated review workflow. They may be stored in Evolura&apos;s PostgreSQL review
+                database and operational review records, and an email service may deliver a
+                confirmation or notify the service team.
+              </p>
+              <p>
+                To reduce spam and automated abuse, the website may create pseudonymous
+                hashes from network and email identifiers for rate limiting.
+                These hashes are not displayed publicly and should be removed when they are
+                no longer needed for abuse prevention.
+              </p>
+            </section>
+
+            <section aria-labelledby="review-publication">
+              <p className="section-kicker">Moderation and publication</p>
+              <h2 id="review-publication">Submitting a review does not publish it immediately.</h2>
+              <p>
+                Reviews are held for moderation. Evolura may publish the name, star rating,
+                review text and selected service only after checking authenticity, consent,
+                privacy and respectful language. Email addresses are not published. Reviews
+                may be rejected when they are spam, unrelated, unsafe, unlawful or contain
+                personal information that should not be made public.
               </p>
             </section>
 
             <section aria-labelledby="information-entered">
               <p className="section-kicker">Information you choose to enter</p>
-              <h2 id="information-entered">Only share details relevant to the service request.</h2>
-              <p>The form asks for:</p>
+              <h2 id="information-entered">Only share information relevant to your request or experience.</h2>
+              <p>Do not include:</p>
               <ul>
-                <li>Your name</li>
-                <li>Your phone or WhatsApp number</li>
-                <li>The service required</li>
-                <li>The property location</li>
-                <li>A description of the space, issue or preferred timing</li>
+                <li>Passwords or login details</li>
+                <li>Payment card or bank information</li>
+                <li>Health, identity-document or other unrelated sensitive information</li>
+                <li>Personal details about another person without their permission</li>
               </ul>
-              <p>Do not include passwords, payment card details or unrelated sensitive information.</p>
+            </section>
+
+            <section aria-labelledby="retention-rights">
+              <p className="section-kicker">Retention and requests</p>
+              <h2 id="retention-rights">You can ask about, correct or request deletion of your information.</h2>
+              <p>
+                Evolura keeps form information only as long as reasonably needed to handle
+                the request, moderate and manage a review, maintain appropriate business
+                records or meet legal obligations. Contact Evolura using the details below
+                if you want to ask what information is held, correct it, withdraw a review
+                from publication or request deletion where applicable.
+              </p>
             </section>
 
             <section aria-labelledby="external-services">
@@ -106,7 +151,7 @@ export default function PrivacyPage() {
 
             <section aria-labelledby="privacy-contact">
               <p className="section-kicker">Questions</p>
-              <h2 id="privacy-contact">Contact Evolura about a service request or this page.</h2>
+              <h2 id="privacy-contact">Contact Evolura about your information or this page.</h2>
               <address>
                 {BUSINESS.address}<br />
                 <a href={BUSINESS.phoneHref}>{BUSINESS.phoneDisplay}</a><br />

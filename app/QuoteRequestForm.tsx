@@ -372,7 +372,7 @@ const payload = {
       </div>
 
       <p id="quote-form-privacy" className="form-privacy-note">
-        Your details are sent securely to Evolura's contact workflow so the team
+        Your details are sent securely to Evolura&apos;s contact workflow so the team
         can review your request and respond.{" "}
         <a href="/privacy">Read the privacy explanation.</a>
       </p>
