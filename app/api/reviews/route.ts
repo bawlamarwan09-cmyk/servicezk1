@@ -315,7 +315,7 @@ export async function GET(request: Request) {
       { success: true, reviews },
       {
         status: 200,
-        cacheControl: "public, s-maxage=300, stale-while-revalidate=3600",
+        cacheControl: "public, max-age=0, s-maxage=15, must-revalidate",
       },
     );
   } catch {

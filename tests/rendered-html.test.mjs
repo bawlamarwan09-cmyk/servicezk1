@@ -281,6 +281,28 @@ test("protects review submissions before they reach the private workflow", async
   assert.equal(cacheBustAttempt.headers.get("cache-control"), "no-store");
 });
 
+test("ships a private, approved-only n8n review feed template", async () => {
+  const workflow = JSON.parse(
+    await readFile(
+      new URL("n8n/evolura-public-reviews.workflow.json", root),
+      "utf8",
+    ),
+  );
+  const webhook = workflow.nodes.find((node) => node.type === "n8n-nodes-base.webhook");
+  const database = workflow.nodes.find((node) => node.type === "n8n-nodes-base.postgres");
+  const response = workflow.nodes.find(
+    (node) => node.type === "n8n-nodes-base.respondToWebhook",
+  );
+
+  assert.equal(webhook.parameters.authentication, "headerAuth");
+  assert.equal(webhook.parameters.path, "public-reviews");
+  assert.match(database.parameters.query, /FROM public\.approved_website_reviews/i);
+  assert.match(database.parameters.query, /LIMIT \$1::integer/i);
+  assert.doesNotMatch(database.parameters.query, /customer_email|is_published/i);
+  assert.match(response.parameters.options.responseHeaders.entries[0].value, /no-store/i);
+  assert.doesNotMatch(JSON.stringify(workflow), /customer_email/i);
+});
+
 test("serves focused, canonical service pages", async () => {
   const routes = [
     ["/services/commercial-office-cleaning-dubai", /Commercial and office cleaning services in Dubai/i],
@@ -529,6 +551,9 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(reviewCarousel, /Pause reviews/);
   assert.match(reviewCarousel, /aria-hidden=\{clone/);
   assert.match(reviewCarousel, /reviews\.length >= 4/);
+  assert.match(reviewCarousel, /REVIEW_REFRESH_INTERVAL_MS\s*=\s*30_000/);
+  assert.match(reviewCarousel, /visibilitychange/);
+  assert.match(reviewCarousel, /navigator\.onLine/);
   assert.doesNotMatch(reviewCarousel, /customer_email|dangerouslySetInnerHTML/);
 
   assert.match(reviewApi, /MAX_REQUEST_BYTES\s*=\s*8_192/);
@@ -536,6 +561,8 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(reviewApi, /N8N_REVIEW_WEBHOOK_SECRET/);
   assert.match(reviewApi, /N8N_REVIEW_SUBMIT_URL/);
   assert.match(reviewApi, /N8N_REVIEW_FEED_URL/);
+  assert.match(reviewApi, /s-maxage=15/);
+  assert.doesNotMatch(reviewApi, /stale-while-revalidate=3600/);
   assert.match(reviewApi, /status:\s*202/);
   assert.match(reviewApi, /consentToPublish === true/);
   assert.doesNotMatch(reviewApi, /dangerouslySetInnerHTML/);

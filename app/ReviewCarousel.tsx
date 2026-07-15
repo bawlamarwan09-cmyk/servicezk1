@@ -6,10 +6,30 @@ import { getServiceLabel } from "./site-config";
 
 type ReviewLoadState = "loading" | "ready" | "unavailable";
 
+const REVIEW_REFRESH_INTERVAL_MS = 30_000;
+const REVIEW_REFRESH_MAX_BACKOFF_MS = 5 * 60_000;
+
 const reviewDateFormatter = new Intl.DateTimeFormat("en-AE", {
   month: "short",
   year: "numeric",
 });
+
+function reviewsMatch(current: ApprovedReview[], next: ApprovedReview[]) {
+  return (
+    current.length === next.length &&
+    current.every((review, index) => {
+      const candidate = next[index];
+      return (
+        candidate &&
+        review.name === candidate.name &&
+        review.rating === candidate.rating &&
+        review.review === candidate.review &&
+        review.service === candidate.service &&
+        review.createdAt === candidate.createdAt
+      );
+    })
+  );
+}
 
 function ReviewCard({ review }: { review: ApprovedReview }) {
   const publishedDate = review.createdAt
@@ -62,16 +82,60 @@ export function ReviewCarousel() {
   const [reviews, setReviews] = useState<ApprovedReview[]>([]);
   const [loadState, setLoadState] = useState<ReviewLoadState>("loading");
   const [paused, setPaused] = useState(false);
+  const [feedAnnouncement, setFeedAnnouncement] = useState("");
   const sectionRef = useRef<HTMLElement>(null);
+  const pausedRef = useRef(false);
+  const resumeRefreshRef = useRef<() => void>(() => undefined);
 
   useEffect(() => {
-    const controller = new AbortController();
+    pausedRef.current = paused;
+    if (!paused) resumeRefreshRef.current();
+  }, [paused]);
+
+  useEffect(() => {
+    let activeController: AbortController | null = null;
+    let fallbackTimer = 0;
+    let refreshTimer = 0;
+    let hasLoaded = false;
+    let isNearSection = false;
+    let latestReviews: ApprovedReview[] = [];
+    let requestInFlight = false;
+    let retryDelay = REVIEW_REFRESH_INTERVAL_MS;
+    let disposed = false;
+
+    function clearRefreshTimer() {
+      window.clearTimeout(refreshTimer);
+      refreshTimer = 0;
+    }
+
+    function canRefresh() {
+      return (
+        isNearSection &&
+        document.visibilityState === "visible" &&
+        navigator.onLine &&
+        !(hasLoaded && pausedRef.current)
+      );
+    }
+
+    function scheduleRefresh() {
+      clearRefreshTimer();
+      if (disposed || !canRefresh()) return;
+
+      const jitter = Math.floor(Math.random() * 2_500);
+      refreshTimer = window.setTimeout(loadReviews, retryDelay + jitter);
+    }
 
     async function loadReviews() {
+      if (disposed || requestInFlight || !navigator.onLine) return;
+      if (hasLoaded && pausedRef.current) return;
+
+      requestInFlight = true;
+      activeController = new AbortController();
+
       try {
         const response = await fetch("/api/reviews?limit=24", {
           headers: { Accept: "application/json" },
-          signal: controller.signal,
+          signal: activeController.signal,
         });
         const result = (await response.json().catch(() => null)) as
           | { reviews?: ApprovedReview[] }
@@ -81,45 +145,87 @@ export function ReviewCarousel() {
           throw new Error("Reviews are unavailable");
         }
 
-        setReviews(result.reviews);
+        retryDelay = REVIEW_REFRESH_INTERVAL_MS;
+        if (!reviewsMatch(latestReviews, result.reviews)) {
+          const wasAlreadyLoaded = hasLoaded;
+          latestReviews = result.reviews;
+          setReviews(result.reviews);
+          if (wasAlreadyLoaded) {
+            setFeedAnnouncement(
+              `${result.reviews.length} approved customer reviews now available.`,
+            );
+          }
+        }
+        hasLoaded = true;
         setLoadState("ready");
       } catch {
-        if (controller.signal.aborted) return;
-        setLoadState("unavailable");
+        if (disposed || activeController?.signal.aborted) return;
+        retryDelay = Math.min(
+          retryDelay * 2,
+          REVIEW_REFRESH_MAX_BACKOFF_MS,
+        );
+        if (!hasLoaded) setLoadState("unavailable");
+      } finally {
+        requestInFlight = false;
+        activeController = null;
+        scheduleRefresh();
       }
     }
 
     const section = sectionRef.current;
     if (!section || !("IntersectionObserver" in window)) {
+      isNearSection = true;
       loadReviews();
-      return () => controller.abort();
     }
 
-    let started = false;
-    let fallbackTimer = 0;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        if (started) return;
-        started = true;
-        observer.disconnect();
-        window.clearTimeout(fallbackTimer);
-        loadReviews();
-      },
-      { rootMargin: "500px 0px" },
-    );
-    observer.observe(section);
+    const observer = section && "IntersectionObserver" in window
+      ? new IntersectionObserver(
+          (entries) => {
+            isNearSection = entries.some((entry) => entry.isIntersecting);
+            if (isNearSection) {
+              loadReviews();
+            } else {
+              clearRefreshTimer();
+            }
+          },
+          { rootMargin: "500px 0px" },
+        )
+      : null;
+
+    observer?.observe(section as HTMLElement);
+
     fallbackTimer = window.setTimeout(() => {
-      if (started) return;
-      started = true;
-      observer.disconnect();
-      loadReviews();
+      if (!hasLoaded && !requestInFlight) loadReviews();
     }, 6_000);
 
+    function refreshWhenActive() {
+      if (canRefresh()) {
+        loadReviews();
+      } else {
+        clearRefreshTimer();
+      }
+    }
+
+    function pauseWhenOffline() {
+      clearRefreshTimer();
+      activeController?.abort();
+    }
+
+    resumeRefreshRef.current = refreshWhenActive;
+    document.addEventListener("visibilitychange", refreshWhenActive);
+    window.addEventListener("online", refreshWhenActive);
+    window.addEventListener("offline", pauseWhenOffline);
+
     return () => {
-      observer.disconnect();
+      disposed = true;
+      observer?.disconnect();
       window.clearTimeout(fallbackTimer);
-      controller.abort();
+      clearRefreshTimer();
+      activeController?.abort();
+      resumeRefreshRef.current = () => undefined;
+      document.removeEventListener("visibilitychange", refreshWhenActive);
+      window.removeEventListener("online", refreshWhenActive);
+      window.removeEventListener("offline", pauseWhenOffline);
     };
   }, []);
 
@@ -153,6 +259,10 @@ export function ReviewCarousel() {
           </button>
         ) : null}
       </div>
+
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {feedAnnouncement}
+      </p>
 
       {loadState === "loading" ? (
         <p className="reviews-empty" role="status">

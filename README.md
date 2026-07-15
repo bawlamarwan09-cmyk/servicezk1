@@ -127,6 +127,15 @@ addresses in the feed. Review and run `db/website-reviews-postgres.sql` before
 updating the workflow queries. See `.env.example` for the complete non-secret
 template.
 
+An importable approved-review feed is provided at
+`n8n/evolura-public-reviews.workflow.json`. After importing it, select the
+Header Auth and least-privilege PostgreSQL credentials, publish the workflow,
+and set `N8N_REVIEW_FEED_URL` to its production `/webhook/public-reviews` URL.
+The n8n response is not cached. The website refreshes the feed every 30 seconds
+while the review section is near the viewport and keeps a 15-second shared edge
+cache to protect the workflow from duplicate traffic. New submissions remain
+hidden until they are approved and have publication consent.
+
 The in-process website limiter is only a first layer. Before launch, use the
 PostgreSQL limiter table from the migration in the n8n submit workflow and run
 its documented cleanup query on an hourly n8n schedule.

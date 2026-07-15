@@ -1,0 +1,111 @@
+{
+  "name": "Evolura - Public Approved Reviews",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "public-reviews",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "e2901376-48bc-4d25-8315-cfeec59683d6",
+      "name": "GET Public Reviews",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [300, 300],
+      "webhookId": "evolura-public-reviews"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawLimit = $json.query?.limit;\nconst parsedLimit = Number(rawLimit);\nconst limit = Number.isInteger(parsedLimit) && parsedLimit >= 1 && parsedLimit <= 24\n  ? parsedLimit\n  : 12;\n\nreturn [{ json: { limit } }];"
+      },
+      "id": "a5cf8110-c78e-492b-979b-419d63971d68",
+      "name": "Validate Feed Limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH selected AS (\n  SELECT name, rating, review, service, created_at\n  FROM public.approved_website_reviews\n  ORDER BY created_at DESC\n  LIMIT $1::integer\n)\nSELECT COALESCE(\n  jsonb_agg(\n    jsonb_build_object(\n      'name', name,\n      'rating', rating,\n      'review', review,\n      'service', service,\n      'created_at', created_at\n    )\n    ORDER BY created_at DESC\n  ),\n  '[]'::jsonb\n) AS reviews\nFROM selected;",
+        "options": {
+          "queryReplacement": "={{ [$json.limit] }}"
+        }
+      },
+      "id": "7ae8c27e-77b9-4afb-9adb-50314b51e581",
+      "name": "Postgres - Get Approved Reviews",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, reviews: Array.isArray($json.reviews) ? $json.reviews : [] } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "private, no-store, max-age=0"
+              },
+              {
+                "name": "X-Content-Type-Options",
+                "value": "nosniff"
+              }
+            ]
+          }
+        }
+      },
+      "id": "90a23830-cdef-4534-97da-3cbe9bbb79c1",
+      "name": "Return Reviews to Website",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [1020, 300]
+    }
+  ],
+  "connections": {
+    "GET Public Reviews": {
+      "main": [
+        [
+          {
+            "node": "Validate Feed Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Feed Limit": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Get Approved Reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Get Approved Reviews": {
+      "main": [
+        [
+          {
+            "node": "Return Reviews to Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "tags": []
+}
