@@ -322,28 +322,7 @@ export function EvoluraLanding() {
               </article>
             </div>
 
-            <div className="seo-services-heading reveal">
-              <div>
-                <p className="section-kicker">Explore by service</p>
-                <h3 id="explore-services-heading">
-                  Find the right expertise for every corner of your property.
-                </h3>
-              </div>
-              <div className="seo-services-heading__side">
-                <p>
-                  Explore each service scope, the properties we support and how to arrange
-                  a tailored visit across the United Arab Emirates.
-                </p>
-                <div
-                  className="seo-services-heading__meta"
-                  aria-label="Five services available across Dubai and the UAE"
-                >
-                  <span>05 focused services</span>
-                  <i aria-hidden="true" />
-                  <span>Dubai + UAE</span>
-                </div>
-              </div>
-            </div>
+           import Link from "next/link";
             <ServiceDirectory headingId="explore-services-heading" headingLevel={4} />
           </div>
         </section>
