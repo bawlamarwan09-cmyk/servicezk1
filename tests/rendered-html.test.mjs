@@ -126,6 +126,55 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
+test("publishes one stable Google favicon and the Evolura organization logo", async () => {
+  const response = await render();
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  const faviconTags = [
+    ...html.matchAll(/<link\b[^>]*\brel="icon"[^>]*>/gi),
+  ].map((match) => match[0]);
+
+  assert.equal(
+    faviconTags.length,
+    1,
+    "the homepage should publish one unambiguous Google favicon",
+  );
+  const faviconHref = faviconTags[0].match(/\bhref="([^"]+)"/i)?.[1];
+  assert.ok(faviconHref, "the Google favicon should have an href");
+  const faviconUrl = new URL(faviconHref, expectedSiteOrigin);
+  assert.equal(faviconUrl.origin, expectedSiteOrigin);
+  assert.equal(faviconUrl.pathname, "/evolura-mark-192.png");
+  assert.equal(faviconUrl.search, "");
+  assert.match(faviconTags[0], /sizes="192x192"/i);
+  assert.match(faviconTags[0], /type="image\/png"/i);
+
+  const structuredData = [
+    ...html.matchAll(
+      /<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi,
+    ),
+  ].map((match) => JSON.parse(match[1]));
+  const graphNodes = structuredData.flatMap((data) => data["@graph"] ?? [data]);
+  const business = graphNodes.find((node) => node["@type"] === "LocalBusiness");
+  const website = graphNodes.find((node) => node["@type"] === "WebSite");
+
+  assert.ok(business, "the rendered homepage should identify Evolura as a LocalBusiness");
+  assert.deepEqual(business.logo, {
+    "@type": "ImageObject",
+    url: `${expectedSiteOrigin}/evolura-mark.png`,
+    width: 512,
+    height: 512,
+  });
+  assert.ok(website, "the rendered homepage should include the linked WebSite entity");
+
+  const ico = await readFile(new URL("public/favicon.ico", root));
+  assert.deepEqual(
+    [...ico.subarray(0, 4)],
+    [0, 0, 1, 0],
+    "the conventional fallback should be a genuine ICO file",
+  );
+});
+
 test("serves focused, canonical service pages", async () => {
   const routes = [
     ["/services/commercial-office-cleaning-dubai", /Commercial and office cleaning services in Dubai/i],
