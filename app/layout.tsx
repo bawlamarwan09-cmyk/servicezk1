@@ -4,7 +4,6 @@ import { JsonLd } from "./JsonLd";
 import { SITE_URL, servicePageList } from "./seo-content";
 import { BUSINESS } from "./site-config";
 import { Analytics } from "@vercel/analytics/next";
-<Analytics />
 export default function RootLayout({
   children,
 }: Readonly<{
