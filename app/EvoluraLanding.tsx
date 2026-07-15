@@ -166,14 +166,14 @@ export function EvoluraLanding() {
           <div className="site-shell hero-section__content">
             <div className="hero-section__copy text-white">
               <p className="hero-eyebrow hero-enter hero-enter--1">
-                <span /> Commercial cleaning & building maintenance · Dubai & UAE
+                <span /> Commercial cleaning & building maintenance · UAE
               </p>
               <h1 id="hero-heading" className="hero-heading hero-enter hero-enter--2">
                 Commercial Cleaning &
                 <br />
                 Building Maintenance
                 <br />
-                <em>in Dubai & UAE</em>
+                <em>in UAE</em>
               </h1>
               <p className="hero-description hero-enter hero-enter--3">
                 Professional cleaning and technical maintenance for offices, commercial
