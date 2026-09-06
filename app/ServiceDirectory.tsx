@@ -21,6 +21,7 @@ export function ServiceDirectory({
             <Link
               className={`seo-service-card seo-service-card--${index + 1} scroll-lift-card`}
               href={`/services/${service.slug}`}
+              prefetch={false}
               aria-labelledby={titleId}
               aria-describedby={descriptionId}
             >

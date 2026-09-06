@@ -38,15 +38,27 @@ export function SiteFooter({
         <div className="flex flex-col gap-4 border-t border-white/12 py-6 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Evolura Technical Services.</p>
           <nav className="footer-service-nav" aria-label="Company and service pages">
-            <Link href="/about">About Evolura</Link>
-            <Link href="/services">All services</Link>
-            <Link href="/contact">Contact</Link>
+            <Link href="/about" prefetch={false}>
+              About Evolura
+            </Link>
+            <Link href="/services" prefetch={false}>
+              All services
+            </Link>
+            <Link href="/contact" prefetch={false}>
+              Contact
+            </Link>
             {servicePageList.map((service) => (
-              <Link href={`/services/${service.slug}`} key={service.slug}>
+              <Link
+                href={`/services/${service.slug}`}
+                key={service.slug}
+                prefetch={false}
+              >
                 {service.directoryTitle}
               </Link>
             ))}
-            <Link href="/privacy">Privacy</Link>
+            <Link href="/privacy" prefetch={false}>
+              Privacy
+            </Link>
           </nav>
         </div>
       </div>

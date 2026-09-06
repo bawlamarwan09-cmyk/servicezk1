@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, MouseEvent, ReactNode, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   BUSINESS,
   DEFAULT_WHATSAPP_QUOTE_URL,
@@ -23,46 +23,6 @@ const fieldIds: Record<FieldName, string> = {
 
 function describedBy(field: FieldName, errors: FieldErrors) {
   return errors[field] ? `${fieldIds[field]}-error` : undefined;
-}
-
-export function QuoteRequestLink({
-  service,
-  children,
-}: {
-  service: string;
-  children: ReactNode;
-}) {
-  return (
-    <a
-      href={`/?service=${encodeURIComponent(service)}#request-service`}
-      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
-        if (window.location.pathname !== "/") return;
-
-        event.preventDefault();
-        const nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set("service", service);
-        nextUrl.hash = "request-service";
-        window.history.replaceState(null, "", nextUrl);
-        window.dispatchEvent(
-          new CustomEvent("evolura:select-service", { detail: { service } }),
-        );
-        const requestSection = document.getElementById("request-service");
-        requestSection?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-            .matches
-            ? "auto"
-            : "smooth",
-          block: "start",
-        });
-        window.setTimeout(
-          () => requestSection?.focus({ preventScroll: true }),
-          0,
-        );
-      }}
-    >
-      {children}
-    </a>
-  );
 }
 
 export function QuoteRequestForm() {

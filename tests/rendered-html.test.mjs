@@ -95,7 +95,7 @@ test("server-renders the complete Evolura landing page", async () => {
   assertCanonical(html, "/");
   assert.match(html, /Commercial Cleaning &amp;/i);
   assert.match(html, /Building Maintenance/i);
-  assert.match(html, /in Dubai &amp; UAE/i);
+  assert.match(html, /Dubai and across the UAE/i);
   assert.match(html, /Request a WhatsApp Quote/i);
   assert.match(html, /Submit request/i);
   assert.match(html, /WhatsApp us/i);
@@ -480,8 +480,10 @@ test("keeps service requests accessible and production-ready", async () => {
     quoteForm,
     reviewForm,
     reviewCarousel,
+    reviewCarouselRuntime,
     reviewApi,
     siteHeader,
+    siteHeaderControls,
     siteConfig,
     metadataHelper,
     jsonLd,
@@ -497,8 +499,10 @@ test("keeps service requests accessible and production-ready", async () => {
     readFile(new URL("app/QuoteRequestForm.tsx", root), "utf8"),
     readFile(new URL("app/ReviewForm.tsx", root), "utf8"),
     readFile(new URL("app/ReviewCarousel.tsx", root), "utf8"),
+    readFile(new URL("app/ReviewCarouselRuntime.tsx", root), "utf8"),
     readFile(new URL("app/api/reviews/route.ts", root), "utf8"),
     readFile(new URL("app/SiteHeader.tsx", root), "utf8"),
+    readFile(new URL("app/SiteHeaderControls.tsx", root), "utf8"),
     readFile(new URL("app/site-config.ts", root), "utf8"),
     readFile(new URL("app/metadata.ts", root), "utf8"),
     readFile(new URL("app/JsonLd.tsx", root), "utf8"),
@@ -548,13 +552,18 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.doesNotMatch(reviewForm, /dangerouslySetInnerHTML/);
 
   assert.match(reviewCarousel, /^"use client";/);
-  assert.match(reviewCarousel, /Pause reviews/);
-  assert.match(reviewCarousel, /aria-hidden=\{clone/);
-  assert.match(reviewCarousel, /reviews\.length >= 4/);
-  assert.match(reviewCarousel, /REVIEW_REFRESH_INTERVAL_MS\s*=\s*30_000/);
-  assert.match(reviewCarousel, /visibilitychange/);
-  assert.match(reviewCarousel, /navigator\.onLine/);
-  assert.doesNotMatch(reviewCarousel, /customer_email|dangerouslySetInnerHTML/);
+  assert.match(reviewCarousel, /import\("\.\/ReviewCarouselRuntime"\)/);
+  assert.match(reviewCarousel, /IntersectionObserver/);
+  assert.match(reviewCarouselRuntime, /Pause reviews/);
+  assert.match(reviewCarouselRuntime, /aria-hidden=\{clone/);
+  assert.match(reviewCarouselRuntime, /reviews\.length >= 4/);
+  assert.match(reviewCarouselRuntime, /REVIEW_REFRESH_INTERVAL_MS\s*=\s*30_000/);
+  assert.match(reviewCarouselRuntime, /visibilitychange/);
+  assert.match(reviewCarouselRuntime, /navigator\.onLine/);
+  assert.doesNotMatch(
+    `${reviewCarousel}\n${reviewCarouselRuntime}`,
+    /customer_email|dangerouslySetInnerHTML/,
+  );
 
   assert.match(reviewApi, /MAX_REQUEST_BYTES\s*=\s*8_192/);
   assert.match(reviewApi, /requestIsSameOrigin/);
@@ -567,11 +576,13 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(reviewApi, /consentToPublish === true/);
   assert.doesNotMatch(reviewApi, /dangerouslySetInnerHTML/);
 
-  assert.match(siteHeader, /^"use client";/);
-  assert.match(siteHeader, /event\.key !== "Escape"/);
-  assert.match(siteHeader, /aria-expanded=\{menuOpen\}/);
-  assert.match(siteHeader, /aria-controls="mobile-navigation"/);
-  assert.match(siteHeader, /inert=\{!menuOpen/);
+  assert.doesNotMatch(siteHeader, /^"use client";/);
+  assert.match(siteHeader, /SiteHeaderControls/);
+  assert.match(siteHeaderControls, /^"use client";/);
+  assert.match(siteHeaderControls, /event\.key !== "Escape"/);
+  assert.match(siteHeaderControls, /aria-expanded=\{menuOpen\}/);
+  assert.match(siteHeaderControls, /aria-controls="mobile-navigation"/);
+  assert.match(siteHeaderControls, /inert=\{!menuOpen/);
 
   assert.match(siteConfig, /whatsappNumber:\s*"971503112307"/);
   assert.match(siteConfig, /https:\/\/wa\.me\/\$\{BUSINESS\.whatsappNumber\}/);

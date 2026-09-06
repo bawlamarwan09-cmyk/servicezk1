@@ -223,25 +223,47 @@ export default function RootLayout({
         {/* Vercel Analytics */}
         <Analytics />
 
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-TSDQ844582"
-          strategy="afterInteractive"
-        />
-
-        <Script id="google-analytics" strategy="afterInteractive">
+        {/* Keep analytics off the initial interaction path while preserving page-view tracking. */}
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
-            window.dataLayer = window.dataLayer || [];
+            (function () {
+              var loaded = false;
+              var engagementEvents = ["pointerdown", "keydown", "touchstart"];
 
-            function gtag() {
-              window.dataLayer.push(arguments);
-            }
+              function loadAnalytics() {
+                if (loaded) return;
+                loaded = true;
+                window.clearTimeout(fallbackTimer);
+                engagementEvents.forEach(function (eventName) {
+                  window.removeEventListener(eventName, loadAnalytics);
+                });
 
-            gtag("js", new Date());
+                window.dataLayer = window.dataLayer || [];
 
-            gtag("config", "G-TSDQ844582", {
-              page_path: window.location.pathname,
-            });
+                function gtag() {
+                  window.dataLayer.push(arguments);
+                }
+
+                gtag("js", new Date());
+                gtag("config", "G-TSDQ844582", {
+                  page_path: window.location.pathname,
+                });
+
+                var analyticsScript = document.createElement("script");
+                analyticsScript.async = true;
+                analyticsScript.src =
+                  "https://www.googletagmanager.com/gtag/js?id=G-TSDQ844582";
+                document.head.appendChild(analyticsScript);
+              }
+
+              var fallbackTimer = window.setTimeout(loadAnalytics, 6000);
+              engagementEvents.forEach(function (eventName) {
+                window.addEventListener(eventName, loadAnalytics, {
+                  once: true,
+                  passive: true,
+                });
+              });
+            })();
           `}
         </Script>
       </body>

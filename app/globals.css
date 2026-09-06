@@ -2728,6 +2728,10 @@ body {
   gap: 9px;
 }
 
+.site-header-controller {
+  display: contents;
+}
+
 .mobile-menu-toggle,
 .mobile-navigation {
   display: none;

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { MobileContactBar } from "./MobileContactBar";
-import { QuoteRequestForm, QuoteRequestLink } from "./QuoteRequestForm";
+import { QuoteLinkController } from "./QuoteLinkController";
+import { QuoteRequestForm } from "./QuoteRequestForm";
+import { QuoteRequestLink } from "./QuoteRequestLink";
 import { ReviewSection } from "./ReviewSection";
 import { ServiceDirectory } from "./ServiceDirectory";
 import { SiteHeader } from "./SiteHeader";
@@ -143,6 +145,7 @@ export function EvoluraLanding() {
       </a>
 
       <SiteHeader />
+      <QuoteLinkController />
 
       <main id="main-content" tabIndex={-1}>
         <section id="top" className="hero-section" aria-labelledby="hero-heading" tabIndex={-1}>
@@ -354,7 +357,7 @@ export function EvoluraLanding() {
                 </article>
               ))}
             </div>
-            <Link className="text-link mt-9" href="/about">
+            <Link className="text-link mt-9" href="/about" prefetch={false}>
               About Evolura and how we work <span aria-hidden="true">→</span>
             </Link>
           </div>
