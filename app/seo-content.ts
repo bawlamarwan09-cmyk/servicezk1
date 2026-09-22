@@ -17,7 +17,7 @@ export const SITE_URL = normalizeSiteUrl(
 );
 
 // Update this only when indexable content changes; sitemap dates should describe real edits.
-export const CONTENT_LAST_MODIFIED = new Date("2026-07-15T00:00:00.000Z");
+export const CONTENT_LAST_MODIFIED = new Date("2026-09-22T00:00:00.000Z");
 
 export type FaqItem = {
   question: string;
@@ -27,6 +27,8 @@ export type FaqItem = {
 export type ServiceSlug =
   | "commercial-office-cleaning-dubai"
   | "deep-post-construction-cleaning-dubai"
+  | "ac-duct-cleaning-dubai"
+  | "commercial-kitchen-hood-cleaning-dubai"
   | "building-maintenance-dubai"
   | "mep-hvac-maintenance-dubai"
   | "facility-management-services-uae";
@@ -178,8 +180,8 @@ export const servicePages: Record<ServiceSlug, ServicePageContent> = {
     ],
     related: [
       "deep-post-construction-cleaning-dubai",
+      "commercial-kitchen-hood-cleaning-dubai",
       "facility-management-services-uae",
-      "building-maintenance-dubai",
     ],
   },
 
@@ -263,9 +265,213 @@ export const servicePages: Record<ServiceSlug, ServicePageContent> = {
       },
     ],
     related: [
+      "ac-duct-cleaning-dubai",
       "commercial-office-cleaning-dubai",
-      "facility-management-services-uae",
       "building-maintenance-dubai",
+    ],
+  },
+
+  "ac-duct-cleaning-dubai": {
+    slug: "ac-duct-cleaning-dubai",
+    shortTitle: "AC duct cleaning",
+    directoryTitle: "AC duct cleaning",
+    directoryDescription:
+      "Professional duct and vent cleaning for cleaner airflow in homes and commercial properties.",
+    code: "AC",
+    image: {
+      src: "/services/ac-duct-cleaning.webp",
+      srcSmall: "/services/ac-duct-cleaning-720.webp",
+      alt: "Professional technician cleaning an air-conditioning duct with high-powered vacuum equipment",
+    },
+    metaTitle: "AC Duct Cleaning Services Dubai | Evolura",
+    metaDescription:
+      "Professional AC duct cleaning in Dubai for apartments, villas, offices and shops. Remove accumulated dust and debris from ducts, vents and grilles.",
+    eyebrow: "AC duct cleaning services · Dubai & UAE",
+    title: "Professional AC duct cleaning services in Dubai",
+    overviewHeading: "Cleaner ducts for fresher air and more efficient airflow",
+    inclusionsHeading: "What our AC duct cleaning service includes",
+    serviceFormat: "Focused one-off cleaning after inspection",
+    introduction:
+      "Improve your indoor air quality and AC performance with professional duct cleaning. Evolura removes accumulated dust, dirt, debris and contaminants from air-conditioning duct systems to help maintain a cleaner, fresher indoor environment.",
+    summary:
+      "AC duct cleaning is recommended when a property has excessive dust, unpleasant odors from the AC, reduced airflow, or has recently undergone renovation or maintenance work. We inspect the system, clean the accessible ducts, vents and grilles, then complete a final system check.",
+    inclusions: [
+      {
+        title: "Duct and vent inspection",
+        copy: "Inspection of accessible AC ducts, air vents and system access points before cleaning begins.",
+      },
+      {
+        title: "Supply and return duct cleaning",
+        copy: "Cleaning of accessible supply and return air ducts to remove accumulated dust, dirt and debris.",
+      },
+      {
+        title: "Dust and debris removal",
+        copy: "Focused removal of built-up particles and contaminants from within the agreed duct-cleaning scope.",
+      },
+      {
+        title: "Vents, grilles and diffusers",
+        copy: "Detailed cleaning of accessible air vents, grilles and diffusers for a cleaner system finish.",
+      },
+      {
+        title: "AC access-point cleaning",
+        copy: "Cleaning around accessible service openings and AC access points included in the agreed scope.",
+      },
+      {
+        title: "Professional vacuum equipment",
+        copy: "High-powered vacuum and professional cleaning equipment used to capture and remove loosened debris.",
+      },
+      {
+        title: "Dusty odor reduction",
+        copy: "Removal of accumulated dust and debris that can contribute to unpleasant odors when the AC operates.",
+      },
+      {
+        title: "Final system inspection",
+        copy: "A final visual review of the cleaned access points, vents and agreed duct areas after the service.",
+      },
+    ],
+    propertyTypes: [
+      "Apartments and villas",
+      "Offices and workplaces",
+      "Shops and retail spaces",
+      "Commercial and managed properties",
+    ],
+    standards: [
+      "Cleaner and fresher indoor air",
+      "Reduced circulation of accumulated dust",
+      "Improved airflow and AC efficiency",
+      "Help reducing unpleasant dusty odors",
+      "Cleaner AC vents and duct system",
+    ],
+    faqs: [
+      {
+        question: "When is AC duct cleaning recommended?",
+        answer:
+          "It is recommended when you notice excessive indoor dust, unpleasant dusty odors from the AC, reduced airflow, visibly dirty vents, or after renovation and maintenance work.",
+      },
+      {
+        question: "What does AC duct cleaning include?",
+        answer:
+          "The service includes inspection of accessible ducts and vents, cleaning of supply and return ducts, removal of accumulated dust and debris, cleaning of vents, grilles, diffusers and access points, and a final inspection.",
+      },
+      {
+        question: "Can you clean AC ducts in apartments, villas and offices?",
+        answer:
+          "Yes. Evolura accepts AC duct cleaning requests for apartments, villas, offices, shops and commercial properties. The scope is confirmed after reviewing the system, access and property details.",
+      },
+      {
+        question: "Can duct cleaning help with AC odors and airflow?",
+        answer:
+          "Removing accumulated dust and debris can help reduce dusty odors and support cleaner airflow. Other odors or performance issues may require separate HVAC inspection or maintenance.",
+      },
+    ],
+    related: [
+      "mep-hvac-maintenance-dubai",
+      "deep-post-construction-cleaning-dubai",
+      "building-maintenance-dubai",
+    ],
+  },
+
+  "commercial-kitchen-hood-cleaning-dubai": {
+    slug: "commercial-kitchen-hood-cleaning-dubai",
+    shortTitle: "Kitchen hood cleaning",
+    directoryTitle: "Commercial kitchen hood cleaning",
+    directoryDescription:
+      "Deep cleaning and degreasing for commercial kitchen hoods and accessible extraction components.",
+    code: "KH",
+    image: {
+      src: "/services/commercial-kitchen-hood-cleaning.webp",
+      srcSmall: "/services/commercial-kitchen-hood-cleaning-720.webp",
+      alt: "Professional technician degreasing a stainless-steel commercial kitchen extraction hood",
+    },
+    metaTitle: "Commercial Kitchen Hood Cleaning Dubai | Evolura",
+    metaDescription:
+      "Professional commercial kitchen hood cleaning in Dubai for restaurants, cafés, hotels and cloud kitchens, including filters and accessible extraction parts.",
+    eyebrow: "Commercial kitchen hood cleaning · Dubai & UAE",
+    title: "Commercial kitchen hood cleaning services in Dubai",
+    overviewHeading: "Deep degreasing for commercial kitchen extraction systems",
+    inclusionsHeading: "What our commercial kitchen hood cleaning service includes",
+    serviceFormat: "Scheduled deep cleaning based on kitchen use and extraction condition",
+    introduction:
+      "Professional deep cleaning helps keep restaurant and commercial kitchen extraction systems cleaner and working effectively. Evolura removes accumulated grease, oil, carbon deposits and dirt from kitchen hoods and accessible extraction components.",
+    summary:
+      "This service is recommended for commercial kitchens operating regularly, especially restaurants with high-volume cooking, frying, grilling or charcoal equipment. We inspect the accessible extraction system, complete the agreed degreasing scope and review the cleaned areas after service.",
+    inclusions: [
+      {
+        title: "Kitchen hood inspection",
+        copy: "An initial inspection of the hood and accessible extraction components to confirm condition, access and cleaning scope.",
+      },
+      {
+        title: "Hood surface degreasing",
+        copy: "Deep cleaning and degreasing of accessible internal and external kitchen hood surfaces.",
+      },
+      {
+        title: "Hood filter cleaning",
+        copy: "Removal and detailed cleaning of accessible hood filters included in the agreed service scope.",
+      },
+      {
+        title: "Accessible exhaust ducts",
+        copy: "Cleaning of accessible exhaust duct sections connected to the commercial kitchen extraction system.",
+      },
+      {
+        title: "Accessible exhaust fan parts",
+        copy: "Cleaning of exhaust fan components where safe access and the system configuration allow.",
+      },
+      {
+        title: "Heavy deposit removal",
+        copy: "Focused removal of accumulated grease, oil and carbon deposits from the agreed extraction areas.",
+      },
+      {
+        title: "Professional degreasing equipment",
+        copy: "Commercial degreasing chemicals and professional equipment selected for the surfaces and level of buildup.",
+      },
+      {
+        title: "Work-area cleanup",
+        copy: "Cleaning of the surrounding protected work area after the hood-cleaning service is complete.",
+      },
+      {
+        title: "Before-and-after inspection",
+        copy: "Inspection of the agreed accessible components before work begins and after cleaning is completed.",
+      },
+    ],
+    propertyTypes: [
+      "Restaurants and cafés",
+      "Hotels and hospitality kitchens",
+      "Cloud and delivery kitchens",
+      "Commercial and institutional kitchens",
+    ],
+    standards: [
+      "Reduced grease accumulation",
+      "Improved kitchen ventilation and extraction",
+      "Help reducing unpleasant odors and smoke buildup",
+      "A cleaner and safer kitchen environment",
+      "Support for extraction equipment service life",
+    ],
+    faqs: [
+      {
+        question: "What is included in commercial kitchen hood cleaning?",
+        answer:
+          "The service includes inspection, degreasing of accessible hood surfaces, filter cleaning, cleaning of accessible exhaust duct sections and fan components, heavy deposit removal, work-area cleanup and a final inspection.",
+      },
+      {
+        question: "How often should a commercial kitchen hood be cleaned?",
+        answer:
+          "The appropriate schedule depends on cooking volume, operating hours, menu and equipment. Kitchens with frequent frying, grilling or charcoal cooking generally require more frequent inspection and cleaning.",
+      },
+      {
+        question: "Which commercial kitchens can request this service?",
+        answer:
+          "Evolura accepts requests from restaurants, cafés, hotels, cloud kitchens and other commercial kitchens. Access, equipment type, operating schedule and the required scope are confirmed before service.",
+      },
+      {
+        question: "Does hood cleaning include every part of the extraction system?",
+        answer:
+          "The service covers the hood, filters and extraction components that are safely accessible within the agreed scope. Specialist access, enclosed duct sections or additional system work is assessed and confirmed separately.",
+      },
+    ],
+    related: [
+      "commercial-office-cleaning-dubai",
+      "deep-post-construction-cleaning-dubai",
+      "facility-management-services-uae",
     ],
   },
 
@@ -435,9 +641,9 @@ export const servicePages: Record<ServiceSlug, ServicePageContent> = {
       },
     ],
     related: [
+      "ac-duct-cleaning-dubai",
       "building-maintenance-dubai",
       "facility-management-services-uae",
-      "commercial-office-cleaning-dubai",
     ],
   },
 

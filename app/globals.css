@@ -2362,11 +2362,11 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .seo-services-grid > li:nth-child(5) {
+  .seo-services-grid > li:nth-child(5):last-child {
     grid-column: 1 / -1;
   }
 
-  .seo-services-grid > li:nth-child(5) > .seo-service-card .seo-service-card__media {
+  .seo-services-grid > li:nth-child(5):last-child > .seo-service-card .seo-service-card__media {
     aspect-ratio: 16 / 6;
   }
 
@@ -2402,7 +2402,7 @@ textarea {
     grid-column: span 6;
   }
 
-  .seo-services-grid > li:nth-child(5) {
+  .seo-services-grid > li:nth-child(5):last-child {
     grid-column: span 4;
   }
 
@@ -3385,7 +3385,11 @@ body {
     grid-column: span 2;
   }
 
-  .seo-services-grid > li:nth-child(5) {
+  .seo-services-grid > li:nth-child(5):last-child {
+    grid-column: 2 / span 2;
+  }
+
+  .seo-services-grid > li:nth-child(7):last-child {
     grid-column: 2 / span 2;
   }
 
@@ -3413,12 +3417,16 @@ body {
     grid-column: span 2;
   }
 
-  .seo-services-grid > li:nth-child(4) {
+  .seo-services-grid > li:nth-child(4):has(+ li:nth-child(5):last-child) {
     grid-column: 2 / span 2;
   }
 
-  .seo-services-grid > li:nth-child(5) {
+  .seo-services-grid > li:nth-child(5):last-child {
     grid-column: 4 / span 2;
+  }
+
+  .seo-services-grid > li:nth-child(7):last-child {
+    grid-column: 3 / span 2;
   }
 }
 

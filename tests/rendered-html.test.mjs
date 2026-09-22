@@ -307,6 +307,8 @@ test("serves focused, canonical service pages", async () => {
   const routes = [
     ["/services/commercial-office-cleaning-dubai", /Commercial and office cleaning services in Dubai/i],
     ["/services/deep-post-construction-cleaning-dubai", /Deep and post-construction cleaning in Dubai/i],
+    ["/services/ac-duct-cleaning-dubai", /Professional AC duct cleaning services in Dubai/i],
+    ["/services/commercial-kitchen-hood-cleaning-dubai", /Commercial kitchen hood cleaning services in Dubai/i],
     ["/services/building-maintenance-dubai", /Reliable building maintenance services in Dubai/i],
     ["/services/mep-hvac-maintenance-dubai", /MEP and HVAC maintenance services in Dubai/i],
     [
@@ -465,9 +467,11 @@ test("publishes crawl directives and a complete sitemap", async () => {
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/about</loc>`, "i"));
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/contact</loc>`, "i"));
   assert.match(sitemap, new RegExp(`<loc>${expectedSiteOrigin}/privacy</loc>`, "i"));
-  assert.match(sitemap, /<lastmod>2026-07-15T00:00:00\.000Z<\/lastmod>/i);
+  assert.match(sitemap, /<lastmod>2026-09-22T00:00:00\.000Z<\/lastmod>/i);
   assert.match(sitemap, /commercial-office-cleaning-dubai/i);
   assert.match(sitemap, /deep-post-construction-cleaning-dubai/i);
+  assert.match(sitemap, /ac-duct-cleaning-dubai/i);
+  assert.match(sitemap, /commercial-kitchen-hood-cleaning-dubai/i);
   assert.match(sitemap, /building-maintenance-dubai/i);
   assert.match(sitemap, /mep-hvac-maintenance-dubai/i);
   assert.match(sitemap, /facility-management-services-uae/i);

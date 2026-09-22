@@ -61,7 +61,7 @@ npm run build:sites
 
 - `/` — main landing page and quotation form
 - `/services` — crawlable service directory and comparison
-- `/services/[service]` — five focused service pages
+- `/services/[service]` — focused service pages generated from shared service content
 - `/about` — factual company and service-process information
 - `/contact` — consistent business details and the quotation form
 - `/privacy` — quote-form and external-contact data flow
