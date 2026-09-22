@@ -6,6 +6,13 @@ type PageMetadataOptions = {
   description: string;
   path?: string;
   index?: boolean;
+  image?: {
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+    type?: string;
+  };
 };
 
 const sharedSocialImageAlt =
@@ -16,8 +23,16 @@ export function createPageMetadata({
   description,
   path = "",
   index = true,
+  image,
 }: PageMetadataOptions): Metadata {
   const url = `${SITE_URL}${path}`;
+  const socialImage = image ?? {
+    url: "/og.jpg",
+    width: 1200,
+    height: 630,
+    alt: sharedSocialImageAlt,
+    type: "image/jpeg",
+  };
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -31,21 +46,13 @@ export function createPageMetadata({
       siteName: "Evolura Technical Services",
       title,
       description,
-      images: [
-        {
-          url: "/og.jpg",
-          width: 1200,
-          height: 630,
-          alt: sharedSocialImageAlt,
-          type: "image/jpeg",
-        },
-      ],
+      images: [socialImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: "/og.jpg", alt: sharedSocialImageAlt }],
+      images: [{ url: socialImage.url, alt: socialImage.alt }],
     },
     robots: {
       index,

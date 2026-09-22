@@ -6,10 +6,12 @@ import { siteNavigation, type SiteCurrentPath } from "./site-navigation";
 export function SiteHeader({
   home = true,
   quoteHref = "#request-service",
+  quoteLabel = "Request a quote",
   currentPath,
 }: {
   home?: boolean;
   quoteHref?: string;
+  quoteLabel?: string;
   currentPath?: SiteCurrentPath;
 }) {
   return (
@@ -34,7 +36,7 @@ export function SiteHeader({
         </nav>
         <SiteHeaderControls home={home} currentPath={currentPath}>
           <a className="header-cta" href={quoteHref}>
-            Request a quote
+            {quoteLabel}
             <span aria-hidden="true">↘</span>
           </a>
         </SiteHeaderControls>

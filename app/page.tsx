@@ -1,12 +1,19 @@
-import { EvoluraLanding } from "./EvoluraLanding";
+import { acDuctLandingFaqs, EvoluraLanding } from "./EvoluraLanding";
 import { JsonLd } from "./JsonLd";
 import { createPageMetadata } from "./metadata";
-import { SITE_URL, homeFaqs } from "./seo-content";
+import { SITE_URL } from "./seo-content";
 
 export const metadata = createPageMetadata({
-  title: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
+  title: "AC Duct Cleaning Services Dubai | Evolura",
   description:
-    "Professional commercial and office cleaning, building maintenance, HVAC and facility management services in Dubai and across the UAE. Request a quote.",
+    "Professional AC duct cleaning in Dubai for apartments, villas, offices and shops. Clean accessible ducts, vents, grilles and diffusers. Request a free quote.",
+  image: {
+    url: "/og-ac-duct-cleaning.jpg",
+    width: 1200,
+    height: 630,
+    alt: "Bright Dubai living room representing Evolura AC duct cleaning services",
+    type: "image/jpeg",
+  },
 });
 
 const homepageJsonLd = {
@@ -16,19 +23,44 @@ const homepageJsonLd = {
       "@type": "WebPage",
       "@id": `${SITE_URL}/#webpage`,
       url: SITE_URL,
-      name: "Commercial Cleaning & Building Maintenance Dubai | Evolura",
+      name: "AC Duct Cleaning Services Dubai | Evolura",
       description:
-        "Professional commercial and office cleaning, building maintenance, HVAC and facility management services in Dubai and across the UAE.",
+        "Professional AC duct cleaning in Dubai for apartments, villas, offices, shops and commercial properties.",
       inLanguage: "en-AE",
       isPartOf: { "@id": `${SITE_URL}/#website` },
-      about: { "@id": `${SITE_URL}/#business` },
+      about: { "@id": `${SITE_URL}/#ac-duct-cleaning-service` },
       mainEntity: { "@id": `${SITE_URL}/#faq` },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/og-ac-duct-cleaning.jpg`,
+        width: 1200,
+        height: 630,
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": `${SITE_URL}/#ac-duct-cleaning-service`,
+      name: "AC duct cleaning services in Dubai",
+      serviceType: "Air-conditioning duct cleaning",
+      description:
+        "Inspection and professional cleaning of accessible AC ducts, vents, grilles and diffusers for homes and commercial properties in Dubai.",
+      url: SITE_URL,
+      image: `${SITE_URL}/services/ac-duct-cleaning.webp`,
+      provider: { "@id": `${SITE_URL}/#business` },
+      areaServed: {
+        "@type": "City",
+        name: "Dubai",
+      },
+      audience: {
+        "@type": "Audience",
+        audienceType: "Apartment, villa, office, shop and commercial property owners and managers",
+      },
     },
     {
       "@type": "FAQPage",
       "@id": `${SITE_URL}/#faq`,
       isPartOf: { "@id": `${SITE_URL}/#webpage` },
-      mainEntity: homeFaqs.map((faq) => ({
+      mainEntity: acDuctLandingFaqs.map((faq) => ({
         "@type": "Question",
         name: faq.question,
         acceptedAnswer: {

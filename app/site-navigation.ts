@@ -1,13 +1,13 @@
 export const siteNavigation = [
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
-  { label: "How it works", href: "/#how-it-works", homeHref: "#how-it-works" },
+  { label: "Why Evolura", href: "/#benefits", homeHref: "#benefits" },
   {
-    label: "Service gallery",
-    href: "/#service-gallery",
-    homeHref: "#service-gallery",
+    label: "Service areas",
+    href: "/#coverage",
+    homeHref: "#coverage",
   },
-  { label: "Contact", href: "/contact" },
+  { label: "FAQs", href: "/#faq", homeHref: "#faq" },
 ] as const;
 
 export type SiteCurrentPath = "/services" | "/about" | "/contact";

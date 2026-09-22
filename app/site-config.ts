@@ -15,6 +15,14 @@ export const BUSINESS = {
 
 export const SERVICE_OPTIONS = [
   {
+    value: "ac-duct-cleaning-dubai",
+    label: "AC duct cleaning",
+  },
+  {
+    value: "commercial-kitchen-hood-cleaning-dubai",
+    label: "Commercial kitchen hood cleaning",
+  },
+  {
     value: "commercial-office-cleaning-dubai",
     label: "Commercial & office cleaning",
   },

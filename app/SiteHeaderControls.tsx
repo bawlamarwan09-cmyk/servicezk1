@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { List } from "@phosphor-icons/react/dist/csr/List";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { siteNavigation, type SiteCurrentPath } from "./site-navigation";
 
 function focusDestination(href: string) {
@@ -92,8 +94,11 @@ export function SiteHeaderControls({
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span />
-          <span />
+          {menuOpen ? (
+            <X size={21} weight="bold" aria-hidden="true" />
+          ) : (
+            <List size={22} weight="bold" aria-hidden="true" />
+          )}
         </button>
       </div>
       <nav
