@@ -333,6 +333,22 @@ test("serves focused, canonical service pages", async () => {
   }
 });
 
+test("serves the redesigned kitchen hood page with one H1 and accessible conversion paths", async () => {
+  const route = "/services/commercial-kitchen-hood-cleaning-dubai";
+  const response = await render(route);
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
+  assert.match(html, /Commercial kitchen hood cleaning[^<]*<em>in Dubai<\/em>/i);
+  assert.match(html, /aria-label="On this page"/i);
+  assert.match(html, /<details[^>]*open/i);
+  assert.match(html, /aria-label="Quick contact actions"/i);
+  assert.match(html, /href="\/services\/mep-hvac-maintenance-dubai"/i);
+  assert.match(html, /href="\/services\/facility-management-services-uae"/i);
+  assert.match(html, /loading="lazy"/i);
+});
+
 test("serves an indexable services hub with a useful directory", async () => {
   const response = await render("/services");
   assert.equal(response.status, 200);
