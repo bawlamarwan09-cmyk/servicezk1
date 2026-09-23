@@ -1,76 +1,56 @@
-# Design QA — Evolura AC Duct Cleaning Landing Page
+# Evolura services desktop styling QA
 
 ## Comparison target
 
-- Source visual truth: `/Users/macbook/evolura-landing/.design/ac-duct-landing-reference.png`
-- Primary implementation evidence: `/Users/macbook/evolura-landing/.design/implementation-desktop-top.png`
-- Supporting implementation evidence:
-  - `/Users/macbook/evolura-landing/.design/implementation-benefits.png`
-  - `/Users/macbook/evolura-landing/.design/implementation-faq-view.png`
-  - `/Users/macbook/evolura-landing/.design/implementation-form-view.png`
-  - `/Users/macbook/evolura-landing/.design/implementation-mobile-top.png`
-  - `/Users/macbook/evolura-landing/.design/implementation-mobile-faq.png`
-  - `/Users/macbook/evolura-landing/.design/implementation-mobile-form.png`
-- Route: `http://localhost:3000/`
-- State: public, light theme, hydrated page; first FAQ open by default
-
-## Normalization
-
-- Source pixels: 760 × 2068. The source is a compressed full-page concept render rather than a browser capture with a known CSS viewport or density.
-- Desktop implementation pixels: 1440 × 1000 at a 1440 × 1000 CSS viewport.
-- Mobile implementation pixels: 390 × 844 at a 390 × 844 CSS viewport.
-- Density normalization: no artificial density scaling was used. The source and implementation were placed in the same comparison input and judged by composition, hierarchy, visual direction, and focused regions rather than pixel-perfect coordinates. This is appropriate because the brief explicitly requested a custom implementation rather than a mechanical section-by-section copy.
-
-## Findings
-
-- No actionable P0, P1, or P2 findings remain.
-- Typography: the implementation preserves the source's strong condensed-feeling display hierarchy through large, tightly tracked headings, while using a readable system sans-serif stack and calmer body copy. Heading wraps remain intentional at desktop and mobile sizes.
-- Spacing and layout rhythm: the wide split hero, editorial white-space, dark service-scope band, benefit columns, process steps, FAQ split, service grid, and conversion sections retain the source's premium rhythm without reproducing it mechanically. No horizontal overflow or clipped controls were observed at 1440 px or 390 px.
-- Colors and visual tokens: deep navy, bright cyan, pale ice blue, white, and restrained border tones consistently map to the selected direction. Text and controls have clear contrast in the inspected states.
-- Image quality and asset fidelity: the technician image is sharp, relevant, and correctly cropped in the hero and overview. The generated living-room image matches the premium Dubai residential art direction and has no visible text or unsupported claims. Brand marks and interface symbols use supplied assets or the installed Phosphor icon set.
-- Copy and content: the implementation keeps the selected visual direction but replaces unsupported claims, statistics, certifications, and testimonial content with factual service scope, benefits, eligibility, and FAQs. The H1 and page intent remain focused on AC duct cleaning in Dubai.
+- Source visual truth: browser annotations supplied for `https://evolurats.com/#services`, with the live mobile reference captured at `/tmp/evolura-services-mobile-reference.png`.
+- Desktop implementation: `/tmp/evolura-services-desktop-local.png` from `http://localhost:3000/#services`.
+- Mobile implementation: `/tmp/evolura-services-mobile-local.png`.
+- Mobile side-by-side comparison: `/tmp/evolura-services-mobile-comparison.png`.
+- Desktop viewport: 1440 × 1000 CSS pixels at device scale factor 1.
+- Mobile viewport: 736 × 964 CSS pixels at device scale factor 1.
+- Captures use matching browser density; no density normalization was needed.
+- State: homepage services section, standard non-hover state.
 
 ## Full-view comparison evidence
 
-- The selected reference and the rendered desktop top viewport were reviewed together in one comparison input.
-- The implementation matches the source's most important signals: white sticky navigation, split light/image hero, oversized navy/cyan headline, clear conversion actions, compact benefit proof row, technical imagery, and premium editorial spacing.
-- The implementation intentionally uses a straight split rather than the source's diagonal mask and adds more breathing room and factual service detail. These are acceptable customizations under the brief and do not weaken the hierarchy.
+- At 1440px, the service directory renders as three equal columns. Cards measure approximately 445px wide and 583px high, with equal 249px 16:9 image frames and aligned 331px content areas.
+- Six cards form two balanced rows and the seventh card is centered in the last row.
+- At 736px, the live reference and local implementation retain the same one-column service directory, typography, image crop, padding, border radius, and CTA placement.
 
 ## Focused region comparison evidence
 
-- Hero: compared at 1440 × 1000; headline scale, CTA prominence, brand treatment, image crop, and benefit row are visually coherent.
-- Benefits and process: inspected in their rendered desktop states; the four-column rhythm and cyan line icon treatment remain consistent with the reference.
-- FAQ and service cards: inspected at desktop and mobile sizes; native disclosure controls remain readable and clearly interactive.
-- Quote form: inspected at desktop and mobile sizes; labels, required states, fields, and primary/secondary actions remain legible and aligned.
+- The focused comparison covers the annotated commercial cleaning card, its image, body content, and the adjacent service card boundary.
+- Mobile reference and local implementation remain visually equivalent; differences in the side-by-side image are limited to scroll position.
+- Desktop images use the same centered crop and identical aspect ratio across every card.
 
-## Interaction and runtime checks
+## Findings
 
-- Sticky header and mobile navigation opened and closed correctly.
-- Mobile FAQ navigation reached the correct section.
-- A second native FAQ disclosure opened successfully while the first remained available.
-- “Book a service” preselected `ac-duct-cleaning-dubai`, updated the URL, and scrolled to the request section.
-- Browser console warnings/errors checked: none.
-- Automated lint, production build, and 12 server-rendered tests passed.
+- No P0, P1, or P2 mismatch remains.
+- Fonts and typography: existing family, weights, sizes, hierarchy, and copy are unchanged.
+- Spacing and layout rhythm: desktop grid, card heights, image frames, content padding, and CTA baselines are consistent.
+- Colors and visual tokens: existing Evolura colors, borders, shadows, and backgrounds are unchanged.
+- Image quality and asset fidelity: original service images are preserved with centered cover cropping; no replacement assets were introduced.
+- Copy and content: unchanged.
+- Accessibility and interaction: existing link semantics, focus behavior, and hover behavior are unchanged.
 
 ## Comparison history
 
-- Initial comparison: no actionable P0/P1/P2 visual mismatch was identified, so no remediation iteration was required.
+1. Initial issue: legacy desktop selectors gave the first cards and later cards different grid spans and image aspect ratios.
+2. Fix: added a desktop-only three-column override, equal row sizing, a shared 16:9 image frame, equal body sizing, and centered placement for the final card.
+3. Post-fix evidence: desktop measurements are equal across all seven cards; the 736px reference and implementation retain the original mobile layout.
 
-## Open Questions
+## Implementation checklist
 
-- None blocking. The design intentionally avoids fabricated customer quotes and performance guarantees that appeared in the concept direction.
+- [x] Scope layout changes to viewports at or above 1024px.
+- [x] Render three equal service cards per desktop row.
+- [x] Use one 16:9 centered image frame for all desktop service cards.
+- [x] Align titles, descriptions, and CTAs with equal-height card bodies.
+- [x] Keep the final seventh card centered.
+- [x] Preserve mobile layout and component logic.
+- [x] Check lint, tests, production build, console errors, and framework overlays.
 
-## Implementation Checklist
+## Follow-up polish
 
-- [x] Preserve selected navy/cyan premium visual direction.
-- [x] Keep AC duct cleaning intent dominant in metadata, H1, visible copy, FAQ content, and JSON-LD.
-- [x] Verify desktop and mobile responsive states.
-- [x] Verify mobile menu, FAQ disclosure, and quote preselection.
-- [x] Confirm no browser console errors.
-- [x] Confirm lint, build, and test suite pass.
-
-## Follow-up Polish
-
-- P3: a future real project gallery could replace service-preview imagery once the business has approved customer photography.
+- None required for this scoped change.
 
 final result: passed
