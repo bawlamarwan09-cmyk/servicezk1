@@ -219,12 +219,12 @@ export function EvoluraLanding() {
               </p>
             </div>
 
-            <div id="service-categories" className="section-anchor mt-14 grid gap-5 lg:grid-cols-2">
+            <div id="service-categories" className="section-anchor mt-14 grid gap-5 md:grid-cols-2">
               <article className="service-card service-card--cleaning scroll-lift-card">
                 <div className="service-card__topline"><span>01 / Cleaning</span><span>Healthy spaces</span></div>
                 <figure className="service-card__media">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/services/commercial-office-cleaning.webp" srcSet="/services/commercial-office-cleaning-720.webp 720w, /services/commercial-office-cleaning.webp 1440w" sizes="(max-width: 1023px) calc(100vw - 36px), 50vw" alt="Professional cleaner wiping a glass partition in a modern office" width="1440" height="900" loading="lazy" decoding="async" />
+                  <img src="/services/commercial-office-cleaning.webp" srcSet="/services/commercial-office-cleaning-720.webp 720w, /services/commercial-office-cleaning.webp 1440w" sizes="(max-width: 767px) calc(100vw - 36px), 50vw" alt="Professional cleaner wiping a glass partition in a modern office" width="1440" height="900" loading="lazy" decoding="async" />
                   <figcaption>Workplace care, delivered with precision</figcaption>
                 </figure>
                 <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">CL</span><h3>Commercial cleaning services</h3><p>Professional office and commercial cleaning in Dubai, with flexible support for managed facilities across the UAE.</p></div>
@@ -236,7 +236,7 @@ export function EvoluraLanding() {
                 <div className="service-card__topline"><span>02 / Maintenance</span><span>Reliable solutions</span></div>
                 <figure className="service-card__media">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/services/mep-hvac-maintenance.webp" srcSet="/services/mep-hvac-maintenance-720.webp 720w, /services/mep-hvac-maintenance.webp 1440w" sizes="(max-width: 1023px) calc(100vw - 36px), 50vw" alt="HVAC technician checking an air-handling control panel" width="1440" height="900" loading="lazy" decoding="async" />
+                  <img src="/services/mep-hvac-maintenance.webp" srcSet="/services/mep-hvac-maintenance-720.webp 720w, /services/mep-hvac-maintenance.webp 1440w" sizes="(max-width: 767px) calc(100vw - 36px), 50vw" alt="HVAC technician checking an air-handling control panel" width="1440" height="900" loading="lazy" decoding="async" />
                   <figcaption>Technical expertise, ready when you need it</figcaption>
                 </figure>
                 <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">MT</span><h3>Building maintenance services</h3><p>Responsive building, MEP and HVAC maintenance that supports comfort, safety and day-to-day property operation.</p></div>
