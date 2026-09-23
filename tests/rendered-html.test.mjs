@@ -90,13 +90,13 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.match(html, /<html lang="en">/i);
   assert.match(
     html,
-    /<title>AC Duct Cleaning Services Dubai \| Evolura<\/title>/i,
+    /<title>Commercial Cleaning &amp; Building Maintenance Dubai \| Evolura<\/title>/i,
   );
   assertCanonical(html, "/");
-  assert.match(html, /AC Duct Cleaning/i);
-  assert.match(html, /Professional AC duct cleaning for apartments, villas, offices and businesses/i);
-  assert.match(html, /Book your AC duct cleaning in Dubai/i);
-  assert.match(html, /Get a WhatsApp quote/i);
+  assert.match(html, /Commercial Cleaning &amp;/i);
+  assert.match(html, /Building Maintenance/i);
+  assert.match(html, /Dubai and across the UAE/i);
+  assert.match(html, /Request a WhatsApp Quote/i);
   assert.match(html, /Submit request/i);
   assert.match(html, /WhatsApp us/i);
   assert.match(html, /id="request-service"/i);
@@ -143,11 +143,11 @@ test("server-renders the complete Evolura landing page", async () => {
   assert.match(html, /info@evolurats\.com/i);
   assert.match(html, /LocalBusiness/i);
   assert.match(html, /FAQPage/i);
-  assert.match(html, /name="twitter:image:alt" content="Bright Dubai living room representing Evolura AC duct cleaning services"/i);
-  assert.match(html, /AC duct cleaning services in Dubai/i);
-  assert.match(html, /Air-conditioning duct cleaning/i);
+  assert.match(html, /name="twitter:image:alt" content="Evolura commercial cleaning and building maintenance services in Dubai and the UAE"/i);
   assert.match(html, /commercial-office-cleaning-dubai/i);
   assert.match(html, /facility-management-services-uae/i);
+  assert.match(html, /<a[^>]+href="\/about"[^>]*>About Evolura<\/a>/i);
+  assert.match(html, /<a[^>]+href="\/privacy"[^>]*>Privacy<\/a>/i);
   assert.match(html, /<a[^>]+href="\/about"[^>]*>About Evolura<\/a>/i);
   assert.match(html, /<a[^>]+href="\/privacy"[^>]*>Privacy<\/a>/i);
   assert.doesNotMatch(
@@ -309,7 +309,7 @@ test("serves focused, canonical service pages", async () => {
   const routes = [
     ["/services/commercial-office-cleaning-dubai", /Commercial and office cleaning services in Dubai/i],
     ["/services/deep-post-construction-cleaning-dubai", /Deep and post-construction cleaning in Dubai/i],
-    ["/services/ac-duct-cleaning-dubai", /Professional AC duct cleaning services in Dubai/i],
+    ["/services/ac-duct-cleaning-dubai", /AC Duct Cleaning[\s\S]{0,80}in Dubai/i],
     ["/services/commercial-kitchen-hood-cleaning-dubai", /Commercial kitchen hood cleaning services in Dubai/i],
     ["/services/building-maintenance-dubai", /Reliable building maintenance services in Dubai/i],
     ["/services/mep-hvac-maintenance-dubai", /MEP and HVAC maintenance services in Dubai/i],
@@ -629,7 +629,7 @@ test("keeps service requests accessible and production-ready", async () => {
   assert.match(styles, /scroll-margin-top/);
   assert.match(styles, /content-visibility:\s*auto/);
   assert.match(styles, /data-mobile-menu-open/);
-  assert.match(page, /AC Duct Cleaning Services Dubai \| Evolura/);
+  assert.match(page, /Commercial Cleaning & Building Maintenance Dubai \| Evolura/);
   assert.match(layout, /Evolura Technical Services/);
   assert.match(layout, /LocalBusiness/);
   assert.match(layout, /JsonLd/);

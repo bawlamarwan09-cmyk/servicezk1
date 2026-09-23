@@ -1,555 +1,333 @@
-import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr/ArrowUpRight";
-import { Buildings } from "@phosphor-icons/react/dist/ssr/Buildings";
-import { Broom } from "@phosphor-icons/react/dist/ssr/Broom";
-import { CalendarCheck } from "@phosphor-icons/react/dist/ssr/CalendarCheck";
-import { CheckCircle } from "@phosphor-icons/react/dist/ssr/CheckCircle";
-import { Clock } from "@phosphor-icons/react/dist/ssr/Clock";
-import { Fan } from "@phosphor-icons/react/dist/ssr/Fan";
-import { Gauge } from "@phosphor-icons/react/dist/ssr/Gauge";
-import { HouseLine } from "@phosphor-icons/react/dist/ssr/HouseLine";
-import { Leaf } from "@phosphor-icons/react/dist/ssr/Leaf";
-import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
-import { MapPin } from "@phosphor-icons/react/dist/ssr/MapPin";
-import { Phone } from "@phosphor-icons/react/dist/ssr/Phone";
-import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
-import { Sparkle } from "@phosphor-icons/react/dist/ssr/Sparkle";
-import { Storefront } from "@phosphor-icons/react/dist/ssr/Storefront";
-import { Wind } from "@phosphor-icons/react/dist/ssr/Wind";
-import { Wrench } from "@phosphor-icons/react/dist/ssr/Wrench";
-import { Brand } from "./Brand";
 import { MobileContactBar } from "./MobileContactBar";
 import { QuoteLinkController } from "./QuoteLinkController";
 import { QuoteRequestForm } from "./QuoteRequestForm";
 import { QuoteRequestLink } from "./QuoteRequestLink";
 import { ReviewSection } from "./ReviewSection";
+import { ServiceDirectory } from "./ServiceDirectory";
 import { SiteHeader } from "./SiteHeader";
-import { BUSINESS, createWhatsAppUrl } from "./site-config";
-import styles from "./AcDuctLanding.module.css";
+import { SiteFooter } from "./SiteFooter";
+import { homeFaqs } from "./seo-content";
+import { BUSINESS, DEFAULT_WHATSAPP_QUOTE_URL } from "./site-config";
 
-export const acDuctLandingFaqs = [
-  {
-    question: "Why is AC duct cleaning important?",
-    answer:
-      "Dust, dirt and debris can build up inside ducts and around vents over time. Professional cleaning removes accessible buildup, supports cleaner airflow and can help reduce dusty odors in the property.",
-  },
-  {
-    question: "How often should I clean my AC ducts?",
-    answer:
-      "There is no single schedule for every property. The right timing depends on system use, indoor dust, recent renovation work, odors, airflow and the condition found during inspection.",
-  },
-  {
-    question: "Do you provide AC duct cleaning for apartments and villas?",
-    answer:
-      "Yes. Evolura accepts AC duct cleaning requests for apartments, villas, offices, shops and managed commercial properties across Dubai, subject to access and system scope.",
-  },
-  {
-    question: "Can duct cleaning help with allergies?",
-    answer:
-      "Duct cleaning is not a medical treatment, but removing accumulated dust and debris may support a cleaner indoor environment. Speak with a healthcare professional for allergy-specific advice.",
-  },
-  {
-    question: "How long does the service take?",
-    answer:
-      "Timing depends on the property size, number of vents, duct access and the amount of buildup. Share your property details and Evolura can confirm the likely scope before the visit.",
-  },
-] as const;
+const cleaningServices = [
+  "Office & commercial cleaning",
+  "Floor, carpet & upholstery care",
+  "Window & washroom hygiene",
+  "Post-construction & deep cleaning",
+  "Daily, weekly & periodic plans",
+];
 
-const scopeItems = [
+const maintenanceServices = [
+  "Civil & building maintenance",
+  "Mechanical, electrical, plumbing & HVAC",
+  "Painting, carpentry & flooring",
+  "Preventive & breakdown support",
+  "Emergency repair services",
+];
+
+const differentiators = [
   {
     number: "01",
-    icon: MagnifyingGlass,
-    title: "Duct and vent inspection",
-    copy: "We review accessible ducts, vents and system access points before cleaning begins.",
+    title: "Trained service teams",
+    copy: "Professional staff selected for care, conduct and consistent workmanship.",
   },
   {
     number: "02",
-    icon: Broom,
-    title: "Professional dust removal",
-    copy: "High-powered vacuum and cleaning equipment remove accumulated dust, dirt and debris.",
+    title: "Scope confirmed first",
+    copy: "Timing, access and the requested work are reviewed before service is arranged.",
   },
   {
     number: "03",
-    icon: Wind,
-    title: "Supply and return ducts",
-    copy: "Accessible supply and return air ducts are cleaned within the confirmed service scope.",
+    title: "Flexible service plans",
+    copy: "One-time, periodic and ongoing plans shaped around your facility.",
   },
   {
     number: "04",
-    icon: Fan,
-    title: "Vents, grilles and diffusers",
-    copy: "Accessible covers and air outlets receive detailed cleaning for a cleaner system finish.",
+    title: "Property-aware care",
+    copy: "The service approach is shaped around the space, surfaces, access and agreed scope.",
   },
   {
     number: "05",
-    icon: CheckCircle,
-    title: "Final system check",
-    copy: "We review the agreed cleaned areas and access points before completing the visit.",
+    title: "Urgent request support",
+    copy: "Urgent repairs are reviewed based on the issue, location, access and availability.",
   },
-] as const;
-
-const benefits = [
-  {
-    icon: Leaf,
-    title: "Cleaner indoor air",
-    copy: "Helps reduce the circulation of accumulated dust and debris.",
-  },
-  {
-    icon: HouseLine,
-    title: "More comfort",
-    copy: "Supports fresher airflow throughout homes and workplaces.",
-  },
-  {
-    icon: Gauge,
-    title: "Better airflow",
-    copy: "A cleaner duct system can support more efficient AC performance.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Peace of mind",
-    copy: "A professional scope, careful setup and final inspection.",
-  },
-] as const;
+];
 
 const processSteps = [
-  {
-    number: "01",
-    icon: Phone,
-    title: "Request a quote",
-    copy: "Share the property, location and signs you have noticed.",
-  },
-  {
-    number: "02",
-    icon: CalendarCheck,
-    title: "Confirm the scope",
-    copy: "We review access, system details and a suitable service time.",
-  },
-  {
-    number: "03",
-    icon: Broom,
-    title: "Professional cleaning",
-    copy: "The team cleans the agreed ducts, vents and access points.",
-  },
-  {
-    number: "04",
-    icon: CheckCircle,
-    title: "Final inspection",
-    copy: "The cleaned areas are checked before the visit is completed.",
-  },
-] as const;
+  ["01", "Tell us what you need", "Share the space, service and preferred timing."],
+  ["02", "Request a quotation", "We review the scope and provide a clear next step."],
+  ["03", "Our team completes the service", "The right team arrives and delivers with care."],
+];
 
-const relatedServices = [
+const trustIndicators = [
+  { label: "Dubai based", copy: "Located in Al Barsha 1, Dubai." },
+  { label: "UAE requests", copy: "Coverage and timing are confirmed for each property." },
+  { label: "Direct contact", copy: "Contact Evolura by WhatsApp, phone or email." },
+  { label: "Flexible contracts", copy: "One-time, periodic and ongoing service plans." },
+];
+
+const recentWork = [
   {
-    title: "MEP & HVAC maintenance",
-    copy: "Preventive maintenance and responsive technical support for managed properties.",
-    href: "/services/mep-hvac-maintenance-dubai",
-    image: "/services/mep-hvac-maintenance.webp",
-    alt: "HVAC technician checking an air-handling control panel",
+    title: "Commercial cleaning",
+    slug: "commercial-office-cleaning-dubai",
+    image: "/services/commercial-office-cleaning.webp",
+    imageSmall: "/services/commercial-office-cleaning-720.webp",
+    alt: "Illustrative commercial cleaning service preview",
   },
   {
     title: "Deep cleaning",
-    copy: "Detailed cleaning for properties preparing for use, reopening or handover.",
-    href: "/services/deep-post-construction-cleaning-dubai",
+    slug: "deep-post-construction-cleaning-dubai",
     image: "/services/post-construction-cleaning.webp",
-    alt: "Cleaning team removing fine dust from a newly finished commercial interior",
+    imageSmall: "/services/post-construction-cleaning-720.webp",
+    alt: "Illustrative deep cleaning service preview",
   },
   {
     title: "Building maintenance",
-    copy: "Planned and responsive support for the everyday condition of your property.",
-    href: "/services/building-maintenance-dubai",
+    slug: "building-maintenance-dubai",
     image: "/services/building-maintenance.webp",
-    alt: "Building maintenance technician repairing a door fitting",
+    imageSmall: "/services/building-maintenance-720.webp",
+    alt: "Illustrative building maintenance service preview",
   },
-] as const;
+  {
+    title: "HVAC maintenance",
+    slug: "mep-hvac-maintenance-dubai",
+    image: "/services/mep-hvac-maintenance.webp",
+    imageSmall: "/services/mep-hvac-maintenance-720.webp",
+    alt: "Illustrative HVAC maintenance service preview",
+  },
+  {
+    title: "Facility management",
+    slug: "facility-management-services-uae",
+    image: "/services/facility-management.webp",
+    imageSmall: "/services/facility-management-720.webp",
+    alt: "Illustrative facility management service preview",
+  },
+];
 
-function SectionLabel({ children, light = false }: { children: ReactNode; light?: boolean }) {
-  return (
-    <p className={`${styles.sectionLabel} ${light ? styles.sectionLabelLight : ""}`}>
-      <span aria-hidden="true" />
-      {children}
-    </p>
-  );
-}
+const contactItems = [
+  { label: "Call us", value: BUSINESS.phoneDisplay, href: BUSINESS.phoneHref },
+  { label: "Email", value: BUSINESS.email, href: `mailto:${BUSINESS.email}` },
+  { label: "Visit", value: BUSINESS.shortAddress, href: BUSINESS.mapsUrl },
+];
 
 export function EvoluraLanding() {
-  const whatsappHref = createWhatsAppUrl(
-    "Hello Evolura, I would like a quote for AC duct cleaning.",
-  );
-
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen overflow-x-clip bg-white text-[#0b2434]">
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
 
-      <SiteHeader quoteHref="#request-service" quoteLabel="Get a free quote" />
+      <SiteHeader />
       <QuoteLinkController />
 
       <main id="main-content" tabIndex={-1}>
-        <section id="top" className={styles.hero} aria-labelledby="hero-heading" tabIndex={-1}>
-          <div className={styles.heroGrid}>
-            <div className={styles.heroCopy}>
-              <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-                <Link href="/">Home</Link>
-                <span aria-hidden="true">/</span>
-                <Link href="/services">Services</Link>
-                <span aria-hidden="true">/</span>
-                <span aria-current="page">AC Duct Cleaning</span>
-              </nav>
+        <section id="top" className="hero-section" aria-labelledby="hero-heading" tabIndex={-1}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="hero-section__image"
+            src="/evolura-hero.webp"
+            srcSet="/evolura-hero-960.webp 960w, /evolura-hero-1440.webp 1440w, /evolura-hero.webp 1823w"
+            sizes="(max-width: 767px) 160vw, 100vw"
+            alt="Facility technician operating a floor scrubber in a bright modern lobby"
+            width="1823"
+            height="863"
+            fetchPriority="high"
+            decoding="async"
+          />
+          <div className="hero-section__veil" aria-hidden="true" />
+          <div className="hero-orbit hero-orbit--one" aria-hidden="true" />
+          <div className="hero-orbit hero-orbit--two" aria-hidden="true" />
 
-              <SectionLabel>Healthier spaces · brighter tomorrows</SectionLabel>
-              <h1 id="hero-heading">
-                AC Duct Cleaning
-                <br />
-                <em>in Dubai</em>
-              </h1>
-              <p className={styles.heroLead}>Cleaner air. Fresher spaces. More comfortable living.</p>
-              <p className={styles.heroBody}>
-                Professional AC duct cleaning for apartments, villas, offices and businesses
-                across Dubai. Remove accumulated dust and debris with a carefully confirmed scope.
+          <div className="site-shell hero-section__content">
+            <div className="hero-section__copy text-white">
+              <p className="hero-eyebrow hero-enter hero-enter--1">
+                <span /> Commercial cleaning & building maintenance · UAE
               </p>
-
-              <div className={styles.heroActions}>
-                <QuoteRequestLink service="ac-duct-cleaning-dubai">
-                  Book a service <ArrowUpRight size={18} weight="bold" aria-hidden="true" />
-                </QuoteRequestLink>
-                <a href="#request-service">
-                  Get a free quote <ArrowUpRight size={18} weight="bold" aria-hidden="true" />
+              <h1 id="hero-heading" className="hero-heading hero-enter hero-enter--2">
+                Commercial Cleaning &
+                <br />
+                Building Maintenance
+                <br />
+                <em>in UAE</em>
+              </h1>
+              <p className="hero-description hero-enter hero-enter--3">
+                Professional cleaning and technical maintenance for offices, commercial
+                properties and facilities. Clear quotations, trained teams and flexible
+                service contracts.
+              </p>
+              <div className="hero-actions hero-enter hero-enter--4">
+                <a className="primary-button" href={DEFAULT_WHATSAPP_QUOTE_URL} target="_blank" rel="noreferrer" aria-label="Request a quote on WhatsApp (opens in a new tab)">
+                  Request a WhatsApp Quote <span aria-hidden="true">↗</span>
+                </a>
+                <a className="secondary-button" href={BUSINESS.phoneHref}>
+                  Call Us Now <span aria-hidden="true">↗</span>
                 </a>
               </div>
-
-              <ul className={styles.heroProof} aria-label="AC duct cleaning benefits">
-                <li><Leaf size={22} aria-hidden="true" /><span>Cleaner indoor air</span></li>
-                <li><Wind size={22} aria-hidden="true" /><span>Reduced dust circulation</span></li>
-                <li><HouseLine size={22} aria-hidden="true" /><span>Homes & businesses</span></li>
-                <li><MapPin size={22} aria-hidden="true" /><span>Dubai based</span></li>
+              <ul className="hero-trust-line hero-enter hero-enter--4" aria-label="Service assurances">
+                <li>Fast response</li>
+                <li>Trained staff</li>
+                <li>Dubai-wide service</li>
+                <li>Flexible contracts</li>
               </ul>
             </div>
-
-            <div className={styles.heroVisual}>
-              <Image
-                src="/services/ac-duct-cleaning.webp"
-                alt="Professional technician cleaning an air-conditioning duct in a modern Dubai apartment"
-                fill
-                priority
-                unoptimized
-                sizes="(max-width: 899px) 100vw, 58vw"
-              />
-              <div className={styles.heroCaption}>
-                <span>Clean air.</span>
-                Brighter living.
-              </div>
-              <div className={styles.heroGlass}>
-                <Wind size={26} weight="light" aria-hidden="true" />
-                <span>Professional duct care for Dubai properties</span>
-              </div>
-            </div>
           </div>
         </section>
 
-        <section id="services" className={styles.overview} aria-labelledby="overview-heading">
-          <div className={styles.shell}>
-            <div className={styles.overviewGrid}>
-              <div className={styles.overviewCopy}>
-                <SectionLabel>Service overview</SectionLabel>
-                <h2 id="overview-heading">Fresh air starts with clean ducts.</h2>
-                <p>
-                  Over time, dust, dirt and debris can build up inside AC ducts and around
-                  vents. Professional cleaning removes accessible buildup, supports cleaner
-                  airflow and helps maintain a fresher indoor environment.
-                </p>
-                <ul className={styles.overviewList}>
-                  <li><Buildings size={23} aria-hidden="true" />Residential and commercial properties</li>
-                  <li><Leaf size={23} aria-hidden="true" />Cleaner, fresher indoor environment</li>
-                  <li><Wind size={23} aria-hidden="true" />Reduced circulation of accumulated dust</li>
-                  <li><Gauge size={23} aria-hidden="true" />Support for airflow and AC performance</li>
-                </ul>
-                <Link className={styles.textLink} href="/services/ac-duct-cleaning-dubai">
-                  Explore the full service scope <ArrowUpRight size={18} aria-hidden="true" />
-                </Link>
-              </div>
-
-              <figure className={styles.overviewVisual}>
-                <Image
-                  src="/services/ac-duct-cleaning.webp"
-                  alt="Technician using professional vacuum equipment to clean an accessible ceiling duct"
-                  fill
-                  unoptimized
-                  sizes="(max-width: 899px) 100vw, 52vw"
-                />
-                <figcaption>A cleaner tomorrow starts in your space.</figcaption>
-              </figure>
-            </div>
-
-            <dl className={styles.propertyBand} aria-label="AC duct cleaning service details">
-              <div><dt>Suitable for</dt><dd>Apartments, villas, offices and shops</dd></div>
-              <div><dt>Service focus</dt><dd>Ducts, vents, grilles and diffusers</dd></div>
-              <div><dt>Equipment</dt><dd>High-powered vacuum and professional tools</dd></div>
-            </dl>
+        <section className="trust-strip" aria-labelledby="trust-strip-heading">
+          <h2 id="trust-strip-heading" className="sr-only">Evolura service information</h2>
+          <div className="site-shell trust-strip__grid">
+            {trustIndicators.map((item, index) => (
+              <article className="trust-indicator reveal" key={item.label}>
+                <span aria-hidden="true">0{index + 1}</span>
+                <div><h3>{item.label}</h3><p>{item.copy}</p></div>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section className={styles.scope} aria-labelledby="scope-heading">
-          <div className={styles.shell}>
-            <div className={styles.scopeIntro}>
+        <section id="services" className="services-section section-anchor bg-[#f4f8fa] py-16 md:py-20" aria-labelledby="services-heading" tabIndex={-1}>
+          <div className="services-section__halo" aria-hidden="true" />
+          <div className="site-shell">
+            <div className="reveal grid items-start gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div>
-                <SectionLabel light>Our AC duct cleaning service</SectionLabel>
-                <h2 id="scope-heading">What&apos;s included in our service?</h2>
+                <p className="section-kicker">Our services</p>
+                <h2 id="services-heading" className="section-title mt-5 max-w-[700px]">
+                  Cleaning and technical maintenance.
+                  <br />
+                  Coordinated through one request.
+                </h2>
               </div>
-              <p>
-                A complete, professional scope carried out with suitable equipment and a
-                clear final inspection of the agreed accessible areas.
+              <p className="max-w-[600px] text-base leading-8 text-[#536b79] lg:justify-self-end lg:pt-12 md:text-lg">
+                From the everyday care that keeps your workplace fresh to the technical
+                support that keeps your building performing, Evolura makes facility care
+                feel straightforward.
               </p>
             </div>
 
-            <ol className={styles.scopeList}>
-              {scopeItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <li key={item.number}>
-                    <span className={styles.scopeNumber}>{item.number}</span>
-                    <span className={styles.scopeIcon}><Icon size={28} weight="light" aria-hidden="true" /></span>
-                    <h3>{item.title}</h3>
-                    <p>{item.copy}</p>
-                    <ArrowUpRight className={styles.scopeArrow} size={20} aria-hidden="true" />
-                  </li>
-                );
-              })}
+            <div id="service-categories" className="section-anchor mt-14 grid gap-5 lg:grid-cols-2">
+              <article className="service-card service-card--cleaning scroll-lift-card">
+                <div className="service-card__topline"><span>01 / Cleaning</span><span>Healthy spaces</span></div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/services/commercial-office-cleaning.webp" srcSet="/services/commercial-office-cleaning-720.webp 720w, /services/commercial-office-cleaning.webp 1440w" sizes="(max-width: 1023px) calc(100vw - 36px), 50vw" alt="Professional cleaner wiping a glass partition in a modern office" width="1440" height="900" loading="lazy" decoding="async" />
+                  <figcaption>Workplace care, delivered with precision</figcaption>
+                </figure>
+                <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">CL</span><h3>Commercial cleaning services</h3><p>Professional office and commercial cleaning in Dubai, with flexible support for managed facilities across the UAE.</p></div>
+                <ul>{cleaningServices.map((service) => <li key={service}><span aria-hidden="true">↗</span>{service}</li>)}</ul>
+                <QuoteRequestLink service="commercial-office-cleaning-dubai">Request cleaning <span aria-hidden="true">→</span></QuoteRequestLink>
+              </article>
+
+              <article className="service-card service-card--maintenance scroll-lift-card">
+                <div className="service-card__topline"><span>02 / Maintenance</span><span>Reliable solutions</span></div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/services/mep-hvac-maintenance.webp" srcSet="/services/mep-hvac-maintenance-720.webp 720w, /services/mep-hvac-maintenance.webp 1440w" sizes="(max-width: 1023px) calc(100vw - 36px), 50vw" alt="HVAC technician checking an air-handling control panel" width="1440" height="900" loading="lazy" decoding="async" />
+                  <figcaption>Technical expertise, ready when you need it</figcaption>
+                </figure>
+                <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">MT</span><h3>Building maintenance services</h3><p>Responsive building, MEP and HVAC maintenance that supports comfort, safety and day-to-day property operation.</p></div>
+                <ul>{maintenanceServices.map((service) => <li key={service}><span aria-hidden="true">↗</span>{service}</li>)}</ul>
+                <QuoteRequestLink service="building-maintenance-dubai">Request maintenance <span aria-hidden="true">→</span></QuoteRequestLink>
+              </article>
+            </div>
+            <ServiceDirectory headingId="explore-services-heading" headingLevel={4} />
+          </div>
+        </section>
+
+        <section id="why-evolura" className="section-anchor bg-white py-24 md:py-32" aria-labelledby="why-evolura-heading" tabIndex={-1}>
+          <div className="site-shell">
+            <div className="reveal max-w-[860px]">
+              <p className="section-kicker">Why choose Evolura?</p>
+              <h2 id="why-evolura-heading" className="section-title mt-5">Care you can see.<br />Standards you can trust.</h2>
+            </div>
+            <div className="mt-14 grid border-y border-[#cfdae0] md:grid-cols-2 xl:grid-cols-5">
+              {differentiators.map((item, index) => (
+                <article className={`reason-card reveal ${index > 0 ? "reason-card--border" : ""}`} key={item.number}>
+                  <div className="reason-card__number">{item.number}</div><h3>{item.title}</h3><p>{item.copy}</p>
+                </article>
+              ))}
+            </div>
+            <Link className="text-link mt-9" href="/about" prefetch={false}>About Evolura and how we work <span aria-hidden="true">→</span></Link>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="process-section section-anchor py-24 md:py-28" aria-labelledby="process-heading" tabIndex={-1}>
+          <div className="site-shell">
+            <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div><p className="section-kicker section-kicker--light">How it works</p><h2 id="process-heading" className="process-heading">Three clear steps to a better-maintained space.</h2></div>
+              <p className="process-section__intro">One clear request is all it takes to get the right cleaning or maintenance support moving.</p>
+            </div>
+            <ol className="process-grid">
+              {processSteps.map(([number, title, copy]) => (
+                <li className="process-step reveal" key={number}><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div></li>
+              ))}
             </ol>
           </div>
         </section>
 
-        <section id="benefits" className={styles.benefits} aria-labelledby="benefits-heading">
-          <div className={styles.shell}>
-            <div className={styles.sectionHeadingRow}>
-              <div>
-                <SectionLabel>The difference</SectionLabel>
-                <h2 id="benefits-heading">A cleaner space brings bigger benefits.</h2>
-              </div>
-              <p>
-                Clean ducts do more than improve presentation—they support comfortable,
-                fresher airflow and help your AC system work as intended.
-              </p>
+        <section id="service-gallery" className="recent-work section-anchor py-24 md:py-32" aria-labelledby="service-gallery-heading" tabIndex={-1}>
+          <div className="site-shell">
+            <div className="recent-work__heading reveal">
+              <div><p className="section-kicker section-kicker--light">Service preview gallery</p><h2 id="service-gallery-heading">Explore Evolura&apos;s cleaning and maintenance services.</h2></div>
+              <div><p>These images illustrate Evolura&apos;s service categories and the types of work customers can request.</p><strong>They are service previews—not client project photographs.</strong></div>
             </div>
-
-            <div className={styles.benefitGrid}>
-              {benefits.map((benefit) => {
-                const Icon = benefit.icon;
-                return (
-                  <article key={benefit.title}>
-                    <Icon size={35} weight="light" aria-hidden="true" />
-                    <h3>{benefit.title}</h3>
-                    <p>{benefit.copy}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section id="how-it-works" className={styles.process} aria-labelledby="process-heading">
-          <div className={styles.shell}>
-            <div className={styles.sectionHeadingRow}>
-              <div>
-                <SectionLabel>How it works</SectionLabel>
-                <h2 id="process-heading">A simple process from start to finish.</h2>
-              </div>
-              <p>Share the property details and Evolura will confirm the appropriate next step.</p>
-            </div>
-
-            <ol className={styles.processGrid}>
-              {processSteps.map((step) => {
-                const Icon = step.icon;
-                return (
-                  <li key={step.number}>
-                    <span className={styles.processIcon}><Icon size={27} aria-hidden="true" /></span>
-                    <span className={styles.processNumber}>{step.number}</span>
-                    <h3>{step.title}</h3>
-                    <p>{step.copy}</p>
-                  </li>
-                );
-              })}
-            </ol>
-
-            <div className={styles.bookingBanner}>
-              <Image
-                src="/ac-duct-cta-living-room.webp"
-                alt="Bright contemporary Dubai living room with a clean ceiling air vent"
-                fill
-                unoptimized
-                sizes="(max-width: 899px) 100vw, 1280px"
-              />
-              <div className={styles.bookingOverlay} />
-              <div className={styles.bookingCopy}>
-                <SectionLabel light>Cleaner air for a brighter tomorrow</SectionLabel>
-                <h2>Book your AC duct cleaning in Dubai.</h2>
-                <p>Tell us about your property and the issue you have noticed.</p>
-                <QuoteRequestLink service="ac-duct-cleaning-dubai">
-                  Request AC duct cleaning <ArrowUpRight size={18} weight="bold" aria-hidden="true" />
-                </QuoteRequestLink>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="faq" className={styles.faq} aria-labelledby="faq-heading">
-          <div className={styles.shell}>
-            <div className={styles.faqGrid}>
-              <aside className={styles.faqIntro}>
-                <SectionLabel>Common questions</SectionLabel>
-                <h2 id="faq-heading">Helpful answers before you book.</h2>
-                <div className={styles.expectationCard}>
-                  <Sparkle size={28} weight="light" aria-hidden="true" />
-                  <p>Clear scope. Careful setup. Professional equipment. A final inspection.</p>
-                  <span>What to expect from Evolura</span>
-                </div>
-              </aside>
-
-              <div className={styles.accordion}>
-                {acDuctLandingFaqs.map((faq, index) => (
-                  <details key={faq.question} open={index === 0}>
-                    <summary>
-                      <span>{faq.question}</span>
-                      <i aria-hidden="true">+</i>
-                    </summary>
-                    <p>{faq.answer}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.related} aria-labelledby="related-heading">
-          <div className={styles.shell}>
-            <div className={styles.relatedHeading}>
-              <div>
-                <SectionLabel>Explore more</SectionLabel>
-                <h2 id="related-heading">Other services you may need.</h2>
-              </div>
-              <Link href="/services">View all services <ArrowUpRight size={18} aria-hidden="true" /></Link>
-            </div>
-            <p className={styles.previewNote}>Service previews—not client project photographs.</p>
-
-            <div className={styles.relatedGrid}>
-              {relatedServices.map((service) => (
-                <Link href={service.href} className={styles.relatedCard} key={service.href}>
+            <div className="recent-work__grid">
+              {recentWork.map((item) => (
+                <a className="recent-work__card reveal" href={`/services/${item.slug}`} key={item.title} aria-label={`View ${item.title} service details`}>
                   <figure>
-                    <Image
-                      src={service.image}
-                      alt={service.alt}
-                      fill
-                      unoptimized
-                      sizes="(max-width: 699px) 100vw, (max-width: 1099px) 50vw, 33vw"
-                    />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.image} srcSet={`${item.imageSmall} 720w, ${item.image} 1440w`} sizes="(max-width: 767px) calc(100vw - 36px), (max-width: 1279px) 50vw, 33vw" alt={item.alt} width="1440" height="900" loading="lazy" decoding="async" />
+                    <span>Service preview</span>
+                    <figcaption><div><h3>{item.title}</h3><p>View service scope and request details.</p></div><i aria-hidden="true">↗</i></figcaption>
                   </figure>
-                  <div>
-                    <h3>{service.title}</h3>
-                    <p>{service.copy}</p>
-                    <span aria-hidden="true"><ArrowUpRight size={19} /></span>
-                  </div>
-                </Link>
+                </a>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="coverage" className={styles.coverage} aria-labelledby="coverage-heading">
-          <div className={styles.shell}>
-            <div className={styles.coverageGrid}>
-              <div>
-                <SectionLabel light>Dubai based · UAE requests reviewed</SectionLabel>
-                <h2 id="coverage-heading">Cleaner air for the places where life happens.</h2>
-              </div>
-              <ul>
-                <li><HouseLine size={25} aria-hidden="true" />Apartments & villas</li>
-                <li><Buildings size={25} aria-hidden="true" />Offices & workplaces</li>
-                <li><Storefront size={25} aria-hidden="true" />Shops & retail spaces</li>
-                <li><Wrench size={25} aria-hidden="true" />Managed commercial properties</li>
-              </ul>
+        <section className="coverage-section py-24 md:py-32" aria-labelledby="coverage-heading">
+          <div className="site-shell grid gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-end lg:gap-24">
+            <div className="reveal reveal--left"><p className="section-kicker">Dubai based · UAE coverage</p><h2 id="coverage-heading" className="section-title mt-5">Facility care for properties across the United Arab Emirates.</h2></div>
+            <div className="reveal reveal--right">
+              <p className="coverage-section__lead">Based in Al Barsha 1, Dubai, Evolura accepts cleaning, building maintenance, MEP, HVAC and facility management requests across the UAE. Coverage and timing are confirmed after reviewing the property location and scope.</p>
+              <ul className="coverage-section__types"><li>Offices & workplaces</li><li>Commercial buildings</li><li>Managed residential facilities</li><li>Retail & shared areas</li></ul>
             </div>
           </div>
         </section>
 
-        <section id="request-service" className={styles.request} aria-labelledby="request-heading" tabIndex={-1}>
-          <div className={styles.shell}>
-            <div className={styles.requestGrid}>
-              <div className={styles.requestIntro}>
-                <SectionLabel>Get a free quote</SectionLabel>
-                <h2 id="request-heading">Tell us about your space.</h2>
-                <p>
-                  Share the location, property type and the dust, odor or airflow issue you
-                  have noticed. Evolura will review the scope and confirm the next step.
-                </p>
-                <div className={styles.contactList}>
-                  <a href={BUSINESS.phoneHref}><Phone size={22} aria-hidden="true" /><span><small>Call Evolura</small>{BUSINESS.phoneDisplay}</span></a>
-                  <a href={BUSINESS.mapsUrl} target="_blank" rel="noreferrer"><MapPin size={22} aria-hidden="true" /><span><small>Dubai office</small>Al Barsha 1, Dubai</span></a>
-                  <div><Clock size={22} aria-hidden="true" /><span><small>Request options</small>One-off focused service</span></div>
-                </div>
-              </div>
-              <QuoteRequestForm />
+        <section className="home-faq py-24 md:py-32" aria-labelledby="home-faq-heading">
+          <div className="site-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-24">
+            <div className="reveal reveal--left"><p className="section-kicker">Frequently asked questions</p><h2 id="home-faq-heading" className="section-title mt-5">Cleaning and maintenance answers for UAE properties.</h2></div>
+            <div className="faq-list reveal reveal--right">
+              {homeFaqs.map((faq) => <details key={faq.question}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>)}
             </div>
+          </div>
+        </section>
+
+        <section id="request-service" className="section-anchor request-section py-24 md:py-32" aria-labelledby="request-service-heading" tabIndex={-1}>
+          <div className="site-shell grid gap-14 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
+            <div className="reveal">
+              <p className="section-kicker">Request a quotation</p>
+              <h2 id="request-service-heading" className="section-title mt-5">Tell us what your space needs.</h2>
+              <p className="mt-7 max-w-[540px] text-base leading-8 text-[#5e707b] md:text-lg">Share five quick details. Our team can then confirm the right service, timing and next step for your property.</p>
+              <div id="contact" className="mt-12 divide-y divide-[#d5e0e5] border-y border-[#d5e0e5]" tabIndex={-1}>
+                {contactItems.map((item) => (
+                  <a className="contact-row" href={item.href} key={item.label} target={item.label === "Visit" ? "_blank" : undefined} rel={item.label === "Visit" ? "noreferrer" : undefined} aria-label={item.label === "Visit" ? "View Evolura's office location in Google Maps (opens in a new tab)" : undefined}>
+                    <span>{item.label}</span><strong>{item.value}</strong><i aria-hidden="true">↗</i>
+                  </a>
+                ))}
+              </div>
+            </div>
+            <QuoteRequestForm />
           </div>
         </section>
 
         <ReviewSection />
-
-        <section className={styles.finalCta} aria-labelledby="final-cta-heading">
-          <div className={styles.shell}>
-            <SectionLabel light>Ready for cleaner air?</SectionLabel>
-            <div className={styles.finalCtaRow}>
-              <div>
-                <h2 id="final-cta-heading">Let&apos;s make your space fresher.</h2>
-                <p>Professional AC duct cleaning for homes and businesses across Dubai.</p>
-              </div>
-              <a href={whatsappHref} target="_blank" rel="noreferrer">
-                Get a WhatsApp quote <ArrowUpRight size={19} weight="bold" aria-hidden="true" />
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.shell}>
-          <div className={styles.footerGrid}>
-            <div className={styles.footerBrand}>
-              <Brand href="#top" />
-              <p>Cleaner air. Brighter spaces.</p>
-              <a href={BUSINESS.phoneHref}><Phone size={18} aria-hidden="true" />{BUSINESS.phoneDisplay}</a>
-            </div>
-            <nav aria-label="Service links">
-              <h2>Services</h2>
-              <Link href="/services/ac-duct-cleaning-dubai">AC duct cleaning</Link>
-              <Link href="/services/mep-hvac-maintenance-dubai">MEP & HVAC maintenance</Link>
-              <Link href="/services/deep-post-construction-cleaning-dubai">Deep cleaning</Link>
-              <Link href="/services/commercial-kitchen-hood-cleaning-dubai">Kitchen hood cleaning</Link>
-            </nav>
-            <nav aria-label="Company links">
-              <h2>Company</h2>
-              <Link href="/about">About Evolura</Link>
-              <a href="#benefits">Why Evolura</a>
-              <a href="#coverage">Service areas</a>
-              <Link href="/contact">Contact</Link>
-            </nav>
-            <nav aria-label="Resource links">
-              <h2>Resources</h2>
-              <a href="#faq">FAQs</a>
-              <Link href="/services">All services</Link>
-              <Link href="/privacy">Privacy</Link>
-              <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
-            </nav>
-          </div>
-          <div className={styles.footerBottom}>
-            <p>© {new Date().getFullYear()} Evolura Technical Services. All rights reserved.</p>
-            <p>Dubai, United Arab Emirates</p>
-          </div>
-        </div>
-      </footer>
-
-      <MobileContactBar whatsappHref={whatsappHref} />
+      <SiteFooter backToTopHref="#top" brandHref="#top" showTagline />
+      <MobileContactBar />
     </div>
   );
 }

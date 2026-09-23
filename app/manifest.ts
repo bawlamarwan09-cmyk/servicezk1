@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Evolura Technical Services",
     short_name: "Evolura",
     description:
-      "Professional AC duct cleaning and technical services in Dubai.",
+      "Commercial cleaning and building maintenance services in Dubai.",
     start_url: "/",
     scope: "/",
     display: "standalone",
