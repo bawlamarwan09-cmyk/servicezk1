@@ -4619,6 +4619,12 @@ body {
   }
 }
 
+@media (min-width: 700px) and (max-width: 767px) {
+  #service-categories {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .service-card,
   .service-card__media img {
