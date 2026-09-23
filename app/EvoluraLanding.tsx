@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { GradientCard } from "@/components/ui/gradient-card";
 import { MobileContactBar } from "./MobileContactBar";
 import { QuoteLinkController } from "./QuoteLinkController";
 import { QuoteRequestForm } from "./QuoteRequestForm";
+import { QuoteRequestLink } from "./QuoteRequestLink";
 import { ReviewSection } from "./ReviewSection";
 import { ServiceDirectory } from "./ServiceDirectory";
 import { SiteHeader } from "./SiteHeader";
@@ -10,55 +10,20 @@ import { SiteFooter } from "./SiteFooter";
 import { homeFaqs } from "./seo-content";
 import { BUSINESS, DEFAULT_WHATSAPP_QUOTE_URL } from "./site-config";
 
-const featuredServices = [
-  {
-    badgeText: "Cleaning · Dubai & UAE",
-    badgeColor: "#F59E0B",
-    title: "Commercial cleaning",
-    description:
-      "Scheduled workplace cleaning, floor care, carpets, windows and washroom hygiene for commercial properties.",
-    ctaText: "View cleaning service",
-    ctaHref: "/services/commercial-office-cleaning-dubai",
-    imageUrl: "/services/commercial-office-cleaning-720.webp",
-    imageAlt: "Professional cleaner wiping a glass partition in a modern office",
-    gradient: "orange" as const,
-  },
-  {
-    badgeText: "Air quality · Dubai",
-    badgeColor: "#4B5563",
-    title: "AC duct cleaning",
-    description:
-      "Professional cleaning for accessible ducts, vents and grilles to support cleaner airflow and fresher spaces.",
-    ctaText: "View duct cleaning",
-    ctaHref: "/services/ac-duct-cleaning-dubai",
-    imageUrl: "/services/ac-duct-cleaning-720.webp",
-    imageAlt: "Technician cleaning an accessible air-conditioning duct",
-    gradient: "gray" as const,
-  },
-  {
-    badgeText: "Commercial kitchens · Dubai",
-    badgeColor: "#8B5CF6",
-    title: "Kitchen hood cleaning",
-    description:
-      "Detailed cleaning for commercial kitchen hoods, filters and accessible extraction components.",
-    ctaText: "View hood cleaning",
-    ctaHref: "/services/commercial-kitchen-hood-cleaning-dubai",
-    imageUrl: "/services/commercial-kitchen-hood-cleaning-720.webp",
-    imageAlt: "Technician cleaning a commercial kitchen extraction hood",
-    gradient: "purple" as const,
-  },
-  {
-    badgeText: "Technical care · UAE",
-    badgeColor: "#10B981",
-    title: "Building & HVAC maintenance",
-    description:
-      "Responsive building, MEP and HVAC support for comfort, safety and dependable property operation.",
-    ctaText: "View maintenance",
-    ctaHref: "/services/building-maintenance-dubai",
-    imageUrl: "/services/mep-hvac-maintenance-720.webp",
-    imageAlt: "HVAC technician checking an air-handling control panel",
-    gradient: "green" as const,
-  },
+const cleaningServices = [
+  "Office & commercial cleaning",
+  "Floor, carpet & upholstery care",
+  "Window & washroom hygiene",
+  "Post-construction & deep cleaning",
+  "Daily, weekly & periodic plans",
+];
+
+const maintenanceServices = [
+  "Civil & building maintenance",
+  "Mechanical, electrical, plumbing & HVAC",
+  "Painting, carpentry & flooring",
+  "Preventive & breakdown support",
+  "Emergency repair services",
 ];
 
 const differentiators = [
@@ -255,9 +220,29 @@ export function EvoluraLanding() {
             </div>
 
             <div id="service-categories" className="section-anchor mt-14 grid gap-5 md:grid-cols-2">
-              {featuredServices.map((service) => (
-                <GradientCard key={service.ctaHref} {...service} />
-              ))}
+              <article className="service-card service-card--cleaning scroll-lift-card">
+                <div className="service-card__topline"><span>01 / Cleaning</span><span>Healthy spaces</span></div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/services/commercial-office-cleaning.webp" srcSet="/services/commercial-office-cleaning-720.webp 720w, /services/commercial-office-cleaning.webp 1440w" sizes="(max-width: 699px) calc(100vw - 36px), 50vw" alt="Professional cleaner wiping a glass partition in a modern office" width="1440" height="900" loading="lazy" decoding="async" />
+                  <figcaption>Workplace care, delivered with precision</figcaption>
+                </figure>
+                <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">CL</span><h3>Commercial cleaning services</h3><p>Professional office and commercial cleaning in Dubai, with flexible support for managed facilities across the UAE.</p></div>
+                <ul>{cleaningServices.map((service) => <li key={service}><span aria-hidden="true">↗</span>{service}</li>)}</ul>
+                <QuoteRequestLink service="commercial-office-cleaning-dubai">Request cleaning <span aria-hidden="true">→</span></QuoteRequestLink>
+              </article>
+
+              <article className="service-card service-card--maintenance scroll-lift-card">
+                <div className="service-card__topline"><span>02 / Maintenance</span><span>Reliable solutions</span></div>
+                <figure className="service-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/services/mep-hvac-maintenance.webp" srcSet="/services/mep-hvac-maintenance-720.webp 720w, /services/mep-hvac-maintenance.webp 1440w" sizes="(max-width: 699px) calc(100vw - 36px), 50vw" alt="HVAC technician checking an air-handling control panel" width="1440" height="900" loading="lazy" decoding="async" />
+                  <figcaption>Technical expertise, ready when you need it</figcaption>
+                </figure>
+                <div className="service-card__intro"><span className="service-card__monogram" aria-hidden="true">MT</span><h3>Building maintenance services</h3><p>Responsive building, MEP and HVAC maintenance that supports comfort, safety and day-to-day property operation.</p></div>
+                <ul>{maintenanceServices.map((service) => <li key={service}><span aria-hidden="true">↗</span>{service}</li>)}</ul>
+                <QuoteRequestLink service="building-maintenance-dubai">Request maintenance <span aria-hidden="true">→</span></QuoteRequestLink>
+              </article>
             </div>
             <ServiceDirectory headingId="explore-services-heading" headingLevel={4} />
           </div>
