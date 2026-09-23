@@ -69,6 +69,20 @@ const trustIndicators = [
 
 const recentWork = [
   {
+    title: "AC duct cleaning",
+    slug: "ac-duct-cleaning-dubai",
+    image: "/services/ac-duct-cleaning.webp",
+    imageSmall: "/services/ac-duct-cleaning-720.webp",
+    alt: "Illustrative AC duct cleaning service preview",
+  },
+  {
+    title: "Commercial kitchen hood cleaning",
+    slug: "commercial-kitchen-hood-cleaning-dubai",
+    image: "/services/commercial-kitchen-hood-cleaning.webp",
+    imageSmall: "/services/commercial-kitchen-hood-cleaning-720.webp",
+    alt: "Illustrative commercial kitchen hood cleaning service preview",
+  },
+  {
     title: "Commercial cleaning",
     slug: "commercial-office-cleaning-dubai",
     image: "/services/commercial-office-cleaning.webp",
