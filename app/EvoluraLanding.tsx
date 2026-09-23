@@ -254,7 +254,7 @@ export function EvoluraLanding() {
               </p>
             </div>
 
-            <div id="service-categories" className="section-anchor mt-14 grid gap-5 md:grid-cols-2">
+            <div id="service-categories" className="section-anchor mt-14 grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {featuredServices.map((service) => (
                 <GradientCard key={service.ctaHref} {...service} />
               ))}

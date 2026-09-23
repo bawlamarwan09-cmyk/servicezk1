@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { servicePageList } from "./seo-content";
 
@@ -26,16 +27,12 @@ export function ServiceDirectory({
               aria-describedby={descriptionId}
             >
               <figure className="seo-service-card__media">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={service.image.src}
-                  srcSet={`${service.image.srcSmall} 720w, ${service.image.src} 1440w`}
-                  sizes="(max-width: 767px) calc(100vw - 36px), (max-width: 1279px) 50vw, 33vw"
                   alt={service.image.alt}
-                  width="1440"
-                  height="900"
-                  loading="lazy"
-                  decoding="async"
+                  fill
+                  sizes="(max-width: 767px) calc(100vw - 36px), (max-width: 1023px) calc(50vw - 30px), calc(33vw - 32px)"
+                  className="object-cover object-center"
                 />
               </figure>
               <div className="seo-service-card__body">
