@@ -4616,9 +4616,14 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .process-step:nth-child(3) h3 {
-    font-size: clamp(17px, 1.72vw, 21px);
-    letter-spacing: -0.04em;
-    white-space: nowrap;
+  .process-step h3 {
+    display: flex;
+    min-height: 2.4em;
+    align-items: flex-end;
+    line-height: 1.2;
+  }
+
+  .process-step p {
+    min-height: 3.36em;
   }
 }
